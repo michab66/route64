@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-debugger.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-debugger" modified="$Date: 2004/05/23 09:50:16 $">
+
+<p>Route 64 comes with a simple built-in debugger, called in the old times
+also frequently <i>Monitor</i>.  To open the debugger use either the menu item 
+[Tools/Debugger...] or the toolbar icon <img
+  src="../resources/Bug24.gif"
+  name="The debugger icon."/>.  The window below opens.</p>
+
+<p><img
+  src="images/monitor.gif"
+  name="A plain 64 screen in well-known blue flavours." 
+  border="0"/></p>
+
+<p>Opening the debugger window does not impact the emulation.  To enter single
+step mode, execution has to be interrupted by setting a
+breakpoint or by just performing a break at the current program counter 
+position.</p>
+
+<h2>Breakpoints</h2>
+
+<p>At the top of the window is the <i>Breakpoint</i> configuration section.
+A breakpoint stops the CPU if the contents of one of the registers is equal to 
+a certain value.  To set the breakpoint select the register, enter the break 
+value and set the breakpoint by pressing the [Set] button.  This displays
+the breakpoint in the user interface.</p>
+
+<p>The most common use is to set a breakpoint on the program counter (PC),
+allowing to stop the CPU at the specified code position.</p>
+
+<p>To remove an existing breakpoint, press the [Clear] button.</p>
+
+<h2>Register display</h2>
+
+<p>At the left of the window is the register monitor.  This displays the values 
+of the registers and the status flags while in single-step mode.  Register 
+contents is displayed in hexadecimal notation.  For a decimal displaymove the
+mouse pointer to the register contents in question and wait until a tooltip
+shows up displaying decimal notation.</p>
+
+<ul>
+  <li><p>Accu -- Contents of the accumulator register.</p></li>
+  <li><p>X -- Contents of the X register.</p></li>
+  <li><p>Y -- Contents of the Y register.</p></li>
+  <li><p>N -- Negative flag.</p></li>
+  <li><p>V -- Overflow flag.</p></li>
+  <li><p>C -- Carry flag.</p></li>
+  <li><p>Z -- Zero flag.</p></li>
+  <li><p>B -- Break flag.</p></li>
+  <li><p>I -- Interupt flag.</p></li>
+  <li><p>D -- Decimal flag.</p></li>
+</ul>
+
+<h2>Disassembly section</h2>
+
+<h2>Single step control</h2>
+
+<ul>
+	<li><p>Button Break -- Break execution at the current Program Counter (PC)
+	position.</p></li>
+	<li><p>Button Step -- Perform a single step.</p></li>
+	<li><p>Button Continue -- continue execution until a breakpoint is hit or
+	the [Break] button is pressed again.</p></li>
+</ul>
+
+</chapter>

@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+        <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
+        <TITLE></TITLE>
+        <META NAME="AUTHOR" CONTENT="Michael Binz">
+        <META NAME="VERSION" CONTENT="$Id: package.html 11 2008-09-20 11:06:39Z binzm $">
+</HEAD>
+<BODY>
+In the mos6502 package all chip emulations from this hardware family are
+placed.  The chip emulations placed here should not contain any system specific
+functionality to keep these parts reusable when emulating different systems
+based on the 6502 family of chips. When implementing a Commodore VC20 emulator
+this package would house the resulting classes and possibly some of the
+existing classes -- like the 6502 cpu chip emulation -- should be reusable
+unmodified.<br>
+The package also holds the additional classes needed to implement the real
+chip. An example is the Commodore 64's video interface chip: The complexity of
+this chip's inner workings was distributed across a handful of classes that all
+reside in the mos6502 package with package local scope -- visible and usable
+for the class implementations in that package, but not for classes in other
+packages.
+</BODY>
+</HTML>

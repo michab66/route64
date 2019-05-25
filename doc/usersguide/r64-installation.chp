@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-installation.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-installation" modified="$Date: 2004/05/23 09:50:15 $">
+
+<p>Route 64 supports two different installation scenarios. The first
+one, a Java WebStart based installation, does not require a client
+side installation at all; code and required libraries are
+automatically downloaded from the internet on demand and cached by
+the WebStart client side. The advantage of this kind of installation
+is that WebStart automatically takes care for downloading and
+managing updates which includes dowload and installation of required
+system components like JDK and JavaHelp. The disadvantage of WebStart
+is that certain functionality of Route 64 is disabled when running
+under WebStart control. The most visible feature that is not
+available in Java WebStart is Drag and Drop loading.</p>
+
+<!-- <P>&lt;link&gt;Yes, I want to WebStart now...&lt;link&gt;</P> -->
+
+<p>The alternate option to install Route 64 is also not too
+complicated: Download Route 64 from the SouceForge download area. On
+the download page normally the last 5 release levels of Route 64 can
+be downloaded, normally you should select just the newest version.
+Store the downloaded file wherever you like. The file you got from
+the download is an <i>executable jar</i> file, i.e. it supports a
+simplified form of execution based on your operating system.</p>
+
+<!-- &#8211; is &ndash; -->
+
+<p>The simplest &#8211; and least comfortable &#8211; possibility to
+start Route 64 from the downloaded file is to use the following
+command line in a shell:</p>
+
+<p><code>java -jar route64-&lt;buildnumber&gt;.jar</code></p>
+
+<p>Note that the actual name of the jar file contains a version
+number. The full file name has to be specified on the command line.
+The more convenient possibility to start Route 64 uses the fact that
+on many operating systems the .jar file type is automatically tied to
+the execution of the Java virtual machine. If this is the case on
+your OS, then this means that you just have to navigate in your file
+manager to the dowloaded file and perform a double-click.</p>
+
+<p>Installing Java on a Windows system results in the necessary file
+associations so that the above works, other operating systems should
+provide similar functionality. If you cannot get Route64 to run from
+your file manager, use the command line or WebStart as described
+above.</p>
+
+</chapter>

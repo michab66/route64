@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-terminology.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-terminology" modified="$Date: 2004/05/25 20:21:46 $">
+
+<p>This chapter explains the terminology used around the Commodore 64 
+and Route 64.</p>
+
+<h3>Peripherals</h3>
+
+<p>The Commodore 64 supported two types of persistent storage, either casette 
+tape or 5 1/4 inch floppy disks.  The tape device was called <I>Datasette</I>
+and was notoriously unrelieable.  The floppy disk device was called the
+<I>Commodore 1541</I> floppy drive.  It supported single-sided, low density 
+floppies holding around 160k worth of data.  While the 1541 was a bit expensive
+&#8211; it cost about the same as the Commodore 64 itself &#8211; it developed 
+to the
+normal storage device that most people owned.  Later there where additional 
+periphereals that supported larger disk sizes like the <I>Commodore 1571</I> 
+but these never reached the same level of acceptance like the 1541.</p>
+
+<p>These peripherals are simulated in Route 64 behind the scenes, Route 64 is
+equipped with a Datasette and a floppy drive out of the box.  The
+visible concept is the <i>attachment</i> of an image file to the
+emulator.  The image files are available on the internet and implicitely
+define the type of periphery.  For example the wiedly used <i>.d64</i>
+files represent a Commodore 1541 disk image, while <i>.t64</i> files
+are Datasette tape images.</p>
+
+<h3>Commodore 64 Chips</h3>
+
+<p>Internally the Commodore had some custom chips that were developed
+by <i>MOS Technologies</i>, a chip factory owned by Commodore.  The most
+prominent chips in the Commodore 64 were the VIC and the SID.
+VIC was short for <i>Video Interface Chip</i>, a friendly name for a chip
+originally called <i>MOS65xx</i>.  This chip was
+repsonsible for the impressive graphics capabilities of the 64.</p>
+
+<p>SID stood for <I>Sound Interface Device</I>, officially named
+<I>MOS 65xx</I>, which was responsible for the sound.  The sound
+capabilities were similarly impressive as the graphics capabilities.</p>
+
+<p>Other chips that sometimes are referred to are the CIA chips.  CIA
+is <i>Complex Input/Output Adapter</i> and the 64 had a pair of them,
+being responsible for a range of tasks including keyboard input,
+timer interrupts and joystick handling.</p>
+
+</chapter>

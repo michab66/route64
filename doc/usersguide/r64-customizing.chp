@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-customizing.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-customizing" modified="$Date: 2004/06/05 08:13:17 $">
+
+<p>It is possible to use Route 64 as an Applet and to integrate it into a Web
+page.  The applet supports the configuration of an image file and the start of
+certain programs in that image.  As a consequence it is easy to put up
+Route 64 with your favourite game from the eighties...</p>
+
+<p>Note that the Route 64 applet adds about 150k to the web page that offers
+access to it.  Make sure that the additional traffic is ok.  To be able to view 
+the Web page with the applet it is recommended to use the Sun Java Plug-In.</p>
+
+<p>To integrate the Route 64 Applet into your web site first download the
+standard archive from SourceForge and place the .jar file on your Web server.
+The following lists the required data for the html applet tag:</p>
+
+<ul>
+<li><code>name</code><br/>
+    The name can be freely chosen, e.g. "route64".</li>
+<li><code>code</code><br/>
+    The starter class is 
+    <code>de.michab.apps.route64.Commodore64Applet.class</code></li>
+<li><code>archive</code><br/>
+    This has to refer to the position of the downloaded Route 64 .jar file
+    on your web server, an example is
+    <code>applets/route64-&lt;build id&gt;</code></li>
+<li><code>width</code><br/>
+    Set the width to 380 pixels.</li>
+<li><code>height</code><br/>
+    The recommended height is 290 pixels.</li>
+</ul>
+
+<p>The following parameters are supported by the applet:</p>
+
+<table 
+  border="2" 
+  cellpadding="2" 
+  cellspacing="0" 
+  summary="Parameters supported by the Route 64 applet.">
+  <tr>
+    <th>Parameter</th>
+    <th>Description</th>
+  </tr>
+
+  <tr>
+    <td><code>image</code></td>
+    <td>An optional parameter defining the image file to be loaded.  This is a 
+    relative name that is resolved against the applet's document base.  If your 
+    image is located in the same directory as the web page specify the plain
+    name.  If it is located elsewhere specify the relative path name.  If this 
+    parameter is not specified then no image file will be attached.</td>
+  </tr><tr>
+    <td><code>start</code></td>
+    <td>The name of a file that is contained in the image and that should be
+    loaded and started.  This parameter is optional and is only used if 
+    the <code>image</code> parameter is set as well.  If <code>start</code> is
+    not set, but a file is attached, then no program is started 
+    automatically.  Instead the user can manually LOAD and RUN the file.</td>
+  </tr><tr>
+   <td><code>device</code></td>
+   <td>The input device to be used. Optional, if not set then the keyboard is
+   the default setting.  Set to '0' (zero) to use the keyboard.  Set to '1' or
+   '2' to use joystick one or two, respectively.</td>
+  </tr>
+</table>
+
+</chapter>

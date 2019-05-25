@@ -1,0 +1,639 @@
+                      
+
+    
+Documentation for the NMOS 65xx/85xx Instruction Set
+
+
+        6510 Instructions by Addressing Modes
+        6502 Registers
+        6510/8502 Undocumented Commands
+        Register selection for load and store
+        Decimal mode in NMOS 6500 series
+        6510 features
+        Different CPU types
+        6510 Instruction Timing
+        How Real Programmers Acknowledge Interrupts
+        Memory Management
+        Autostart Code
+        Notes
+        References
+
+
+                
+6510 Instructions by Addressing Modes
+
+
+off- ++++++++++ Positive ++++++++++  ---------- Negative ----------
+set  00      20      40      60      80      a0      c0      e0      mode
+
++00  BRK     JSR     RTI     RTS     NOP*    LDY     CPY     CPX     Impl/immed
++01  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     (indir,x)
++02   t       t       t       t      NOP*t   LDX     NOP*t   NOP*t     ? /immed
++03  SLO*    RLA*    SRE*    RRA*    SAX*    LAX*    DCP*    ISB*    (indir,x)
++04  NOP*    BIT     NOP*    NOP*    STY     LDY     CPY     CPX     Zeropage
++05  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     Zeropage
++06  ASL     ROL     LSR     ROR     STX     LDX     DEC     INC     Zeropage
++07  SLO*    RLA*    SRE*    RRA*    SAX*    LAX*    DCP*    ISB*    Zeropage
+
++08  PHP     PLP     PHA     PLA     DEY     TAY     INY     INX     Implied
++09  ORA     AND     EOR     ADC     NOP*    LDA     CMP     SBC     Immediate
++0a  ASL     ROL     LSR     ROR     TXA     TAX     DEX     NOP     Accu/impl
++0b  ANC**   ANC**   ASR**   ARR**   ANE**   LXA**   SBX**   SBC*    Immediate
++0c  NOP*    BIT     JMP     JMP ()  STY     LDY     CPY     CPX     Absolute
++0d  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     Absolute
++0e  ASL     ROL     LSR     ROR     STX     LDX     DEC     INC     Absolute
++0f  SLO*    RLA*    SRE*    RRA*    SAX*    LAX*    DCP*    ISB*    Absolute
+
++10  BPL     BMI     BVC     BVS     BCC     BCS     BNE     BEQ     Relative
++11  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     (indir),y
++12   t       t       t       t       t       t       t       t         ?
++13  SLO*    RLA*    SRE*    RRA*    SHA**   LAX*    DCP*    ISB*    (indir),y
++14  NOP*    NOP*    NOP*    NOP*    STY     LDY     NOP*    NOP*    Zeropage,x
++15  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     Zeropage,x
++16  ASL     ROL     LSR     ROR     STX  y) LDX  y) DEC     INC     Zeropage,x
++17  SLO*    RLA*    SRE*    RRA*    SAX* y) LAX* y) DCP*    ISB*    Zeropage,x
+
++18  CLC     SEC     CLI     SEI     TYA     CLV     CLD     SED     Implied
++19  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     Absolute,y
++1a  NOP*    NOP*    NOP*    NOP*    TXS     TSX     NOP*    NOP*    Implied
++1b  SLO*    RLA*    SRE*    RRA*    SHS**   LAS**   DCP*    ISB*    Absolute,y
++1c  NOP*    NOP*    NOP*    NOP*    SHY**   LDY     NOP*    NOP*    Absolute,x
++1d  ORA     AND     EOR     ADC     STA     LDA     CMP     SBC     Absolute,x
++1e  ASL     ROL     LSR     ROR     SHX**y) LDX  y) DEC     INC     Absolute,x
++1f  SLO*    RLA*    SRE*    RRA*    SHA**y) LAX* y) DCP*    ISB*    Absolute,x
+
+
+        ROR intruction is available on MC650x microprocessors after
+        June, 1976.
+
+
+        Legend:
+
+        t       Jams the machine
+        *t      Jams very rarely
+        *       Undocumented command
+        **      Unusual operation
+        y)      indexed using Y instead of X
+        ()      indirect instead of absolute
+
+Note that the NOP instructions do have other addressing modes than the implied addressing. The
+NOP instruction is just like any other load instruction, except it does not store the result anywhere
+nor affects the flags. 
+
+6502 Registers
+
+The NMOS 65xx processors are not ruined with too many registers. In addition to that, the registers
+are mostly 8-bit. Here is a brief description of each register: 
+
+     PC Program Counter 
+          This register points the address from which the next instruction byte (opcode or
+          parameter) will be fetched. Unlike other registers, this one is 16 bits in length. The low
+          and high 8-bit halves of the register are called PCL and PCH, respectively. The
+          Program Counter may be read by pushing its value on the stack. This can be done
+          either by jumping to a subroutine or by causing an interrupt. 
+     S Stack pointer 
+          The NMOS 65xx processors have 256 bytes of stack memory, ranging from $0100 to
+          $01FF. The S register is a 8-bit offset to the stack page. In other words, whenever
+          anything is being pushed on the stack, it will be stored to the address $0100+S. 
+
+          The Stack pointer can be read and written by transfering its value to or from the index
+          register X (see below) with the TSX and TXS instructions. 
+     P Processor status 
+          This 8-bit register stores the state of the processor. The bits in this register are called
+          flags. Most of the flags have something to do with arithmetic operations. 
+
+          The P register can be read by pushing it on the stack (with PHP or by causing an
+          interrupt). If you only need to read one flag, you can use the branch instructions.
+          Setting the flags is possible by pulling the P register from stack or by using the flag set
+          or clear instructions. 
+
+          Following is a list of the flags, starting from the 8th bit of the P register (bit 7, value
+          $80): 
+               N Negative flag 
+                    This flag will be set after any arithmetic operations (when any of the
+                    registers A, X or Y is being loaded with a value). Generally, the N flag
+                    will be copied from the topmost bit of the register being loaded. 
+
+                    Note that TXS (Transfer X to S) is not an arithmetic operation. Also note
+                    that the BIT instruction affects the Negative flag just like arithmetic
+                    operations. Finally, the Negative flag behaves differently in Decimal
+                    operations (see description below). 
+               V oVerflow flag 
+                    Like the Negative flag, this flag is intended to be used with 8-bit signed
+                    integer numbers. The flag will be affected by addition and subtraction, the
+                    instructions PLP, CLV and BIT, and the hardware signal -SO. Note that
+                    there is no SEV instruction, even though the MOS engineers loved to use
+                    East European abbreviations, like DDR (Deutsche Demokratische
+                    Republik vs. Data Direction Register). (The Russian abbreviation for their
+                    former trade association COMECON is SEV.) The -SO (Set Overflow)
+                    signal is available on some processors, at least the 6502, to set the V flag.
+                    This enables response to an I/O activity in equal or less than three clock
+                    cycles when using a BVC instruction branching to itself ($50 $FE). 
+
+                    The CLV instruction clears the V flag, and the PLP and BIT instructions
+                    copy the flag value from the bit 6 of the topmost stack entry or from
+                    memory. 
+
+                    After a binary addition or subtraction, the V flag will be set on a sign
+                    overflow, cleared otherwise. What is a sign overflow? For instance, if you
+                    are trying to add 123 and 45 together, the result (168) does not fit in a
+                    8-bit signed integer (upper limit 127 and lower limit -128). Similarly,
+                    adding -123 to -45 causes the overflow, just like subtracting -45 from
+                    123 or 123 from -45 would do. 
+
+                    Like the N flag, the V flag will not be set as expected in the Decimal
+                    mode. Later in this document is a precise operation description. 
+
+                    A common misbelief is that the V flag could only be set by arithmetic
+                    operations, not cleared. 
+               1 unused flag 
+                    To the current knowledge, this flag is always 1. 
+               B Break flag 
+                    This flag is used to distinguish software (BRK) interrupts from hardware
+                    interrupts (IRQ or NMI). The B flag is always set except when the P
+                    register is being pushed on stack when jumping to an interrupt routine to
+                    process only a hardware interrupt. 
+
+                    The official NMOS 65xx documentation claims that the BRK instruction
+                    could only cause a jump to the IRQ vector ($FFFE). However, if an
+                    NMI interrupt occurs while executing a BRK instruction, the processor
+                    will jump to the NMI vector ($FFFA), and the P register will be pushed
+                    on the stack with the B flag set. 
+               D Decimal mode flag 
+                    This flag is used to select the (Binary Coded) Decimal mode for addition
+                    and subtraction. In most applications, the flag is zero. 
+
+                    The Decimal mode has many oddities, and it operates differently on
+                    CMOS processors. See the description of the ADC, SBC and ARR
+                    instructions below. 
+               I Interrupt disable flag 
+                    This flag can be used to prevent the processor from jumping to the IRQ
+                    handler vector ($FFFE) whenever the hardware line -IRQ is active. The
+                    flag will be automatically set after taking an interrupt, so that the
+                    processor would not keep jumping to the interrupt routine if the -IRQ
+                    signal remains low for several clock cycles. 
+               Z Zero flag 
+                    The Zero flag will be affected in the same cases than the Negative flag.
+                    Generally, it will be set if an arithmetic register is being loaded with the
+                    value zero, and cleared otherwise. The flag will behave differently in
+                    Decimal operations. 
+               C Carry flag 
+                    This flag is used in additions, subtractions, comparisons and bit rotations.
+                    In additions and subtractions, it acts as a 9th bit and lets you to chain
+                    operations to calculate with bigger than 8-bit numbers. When subtracting,
+                    the Carry flag is the negative of Borrow: if an overflow occurs, the flag
+                    will be clear, otherwise set. Comparisons are a special case of
+                    subtraction: they assume Carry flag set and Decimal flag clear, and do not
+                    store the result of the subtraction anywhere. 
+
+                    There are four kinds of bit rotations. All of them store the bit that is being
+                    rotated off to the Carry flag. The left shifting instructions are ROL and
+                    ASL. ROL copies the initial Carry flag to the lowmost bit of the byte;
+                    ASL always clears it. Similarly, the ROR and LSR instructions shift to the
+                    right. 
+     A Accumulator 
+          The accumulator is the main register for arithmetic and logic operations. Unlike the
+          index registers X and Y, it has a direct connection to the Arithmetic and Logic Unit
+          (ALU). This is why many operations are only available for the accumulator, not the
+          index registers. 
+     X Index register X 
+          This is the main register for addressing data with indices. It has a special addressing
+          mode, indexed indirect, which lets you to have a vector table on the zero page. 
+     Y Index register Y 
+          The Y register has the least operations available. On the other hand, only it has the
+          indirect indexed addressing mode that enables access to any memory place without
+          having to use self-modifying code. 
+
+6510/8502 Undocumented Commands
+
+-- A brief explanation about what may happen while using don't care states. 
+
+
+        ANE $8B         A = (A | #$EE) & X & #byte
+                        same as
+                        A = ((A & #$11 & X) | ( #$EE & X)) & #byte
+
+                        In real 6510/8502 the internal parameter #$11
+                        may occasionally be #$10, #$01 or even #$00.
+                        This occurs when the video chip starts DMA
+                        between the opcode fetch and the parameter fetch
+                        of the instruction.  The value probably depends
+                        on the data that was left on the bus by the VIC-II.
+
+        LXA $AB         C=Lehti:   A = X = ANE
+                        Alternate: A = X = (A & #byte)
+
+                        TXA and TAX have to be responsible for these.
+
+        SHA $93,$9F     Store (A & X & (ADDR_HI + 1))
+        SHX $9E         Store (X & (ADDR_HI + 1))
+        SHY $9C         Store (Y & (ADDR_HI + 1))
+        SHS $9B         SHA and TXS, where X is replaced by (A & X).
+
+                        Note: The value to be stored is copied also
+                        to ADDR_HI if page boundary is crossed.
+
+        SBX $CB         Carry and Decimal flags are ignored but the
+                        Carry flag will be set in substraction. This
+                        is due to the CMP command, which is executed
+                        instead of the real SBC.
+
+        ARR $6B         This instruction first performs an AND
+                        between the accumulator and the immediate
+                        parameter, then it shifts the accumulator to
+                        the right. However, this is not the whole
+                        truth. See the description below.
+
+Many undocumented commands do not use AND between registers, the CPU
+just throws the bytes to a bus simultaneously and lets the
+open-collector drivers perform the AND. I.e. the command called 'SAX',
+which is in the STORE section (opcodes $A0...$BF), stores the result
+of (A & X) by this way.
+
+More fortunate is its opposite, 'LAX' which just loads a byte
+simultaneously into both A and X.
+
+
+        $6B  ARR
+
+This instruction seems to be a harmless combination of AND and ROR at
+first sight, but it turns out that it affects the V flag and also has
+a special kind of decimal mode. This is because the instruction has
+inherited some properties of the ADC instruction ($69) in addition to
+the ROR ($6A).
+
+In Binary mode (D flag clear), the instruction effectively does an AND
+between the accumulator and the immediate parameter, and then shifts
+the accumulator to the right, copying the C flag to the 8th bit. It
+sets the Negative and Zero flags just like the ROR would. The ADC code
+shows up in the Carry and oVerflow flags. The C flag will be copied
+from the bit 6 of the result (which doesn't seem too logical), and the
+V flag is the result of an Exclusive OR operation between the bit 6
+and the bit 5 of the result.  This makes sense, since the V flag will
+be normally set by an Exclusive OR, too.
+
+In Decimal mode (D flag set), the ARR instruction first performs the
+AND and ROR, just like in Binary mode. The N flag will be copied from
+the initial C flag, and the Z flag will be set according to the ROR
+result, as expected. The V flag will be set if the bit 6 of the
+accumulator changed its state between the AND and the ROR, cleared
+otherwise.
+
+Now comes the funny part. If the low nybble of the AND result,
+incremented by its lowmost bit, is greater than 5, the low nybble in
+the ROR result will be incremented by 6. The low nybble may overflow
+as a consequence of this BCD fixup, but the high nybble won't be
+adjusted. The high nybble will be BCD fixed in a similar way. If the
+high nybble of the AND result, incremented by its lowmost bit, is
+greater than 5, the high nybble in the ROR result will be incremented
+by 6, and the Carry flag will be set. Otherwise the C flag will be
+cleared.
+
+To help you understand this description, here is a C routine that
+illustrates the ARR operation in Decimal mode:
+
+        unsigned
+           A,  /* Accumulator */
+           AL, /* low nybble of accumulator */
+           AH, /* high nybble of accumulator */
+
+           C,  /* Carry flag */
+           Z,  /* Zero flag */
+           V,  /* oVerflow flag */
+           N,  /* Negative flag */
+
+           t,  /* temporary value */
+           s;  /* value to be ARRed with Accumulator */
+
+        t = A & s;                      /* Perform the AND. */
+
+        AH = t >> 4;                    /* Separate the high */
+        AL = t & 15;                    /* and low nybbles. */
+
+        N = C;                          /* Set the N and */
+        Z = !(A = (t >> 1) | (C << 7)); /* Z flags traditionally */
+        V = (t ^ A) & 64;               /* and V flag in a weird way. */
+
+        if (AL + (AL & 1) > 5)          /* BCD "fixup" for low nybble. */
+          A = (A & 0xF0) | ((A + 6) & 0xF);
+
+        if (C = AH + (AH & 1) > 5)      /* Set the Carry flag. */
+          A = (A + 0x60) & 0xFF;        /* BCD "fixup" for high nybble. */
+
+
+
+        $CB  SBX   X <- (A & X) - Immediate
+
+The 'SBX' ($CB) may seem to be very complex operation, even though it
+is a combination of the subtraction of accumulator and parameter, as
+in the 'CMP' instruction, and the command 'DEX'. As a result, both A
+and X are connected to ALU but only the subtraction takes place. Since
+the comparison logic was used, the result of subtraction should be
+normally ignored, but the 'DEX' now happily stores to X the value of
+(A & X) - Immediate.  That is why this instruction does not have any
+decimal mode, and it does not affect the V flag. Also Carry flag will
+be ignored in the subtraction but set according to the result.
+
+ Proof:
+
+
+begin 644 vsbx
+M`0@9$,D'GL(H-#,IJC(U-JS"*#0T*:HR-@```*D`H#V1*Z`_D2N@09$KJ0>%
+M^QBE^VEZJ+$KH#F1*ZD`2"BI`*(`RP`(:-B@.5$K*4#P`E@`H#VQ*SAI`)$K
+JD-Z@/[$K:0"1*Y#4J2X@TO\XH$&Q*VD`D2N0Q,;[$+188/_^]_:_OK>V
+`
+end
+
+ and
+
+
+begin 644 sbx
+M`0@9$,D'GL(H-#,IJC(U-JS"*#0T*:HR-@```'BI`*!-D2N@3Y$KH%&1*ZD#
+MA?L8I?M*2)`#J1@LJ3B@29$K:$J0`ZGX+*G8R)$K&/BXJ?2B8\L)AOP(:(7]
+MV#B@3;$KH$\Q*Z!1\2L(1?SP`0!H1?TIM]#XH$VQ*SAI`)$KD,N@3[$K:0"1
+9*Y#!J2X@TO\XH%&Q*VD`D2N0L<;[$))88-#X
+`
+end
+
+
+These test programs show if your machine is compatible with ours
+regarding the opcode $CB. The first test, vsbx, proves that SBX does
+not affect the V flag. The latter one, sbx, proves the rest of our
+theory. The vsbx test tests 33554432 SBX combinations (16777216
+different A, X and Immediate combinations, and two different V flag
+states), and the sbx test doubles that amount (16777216*4 D and C flag
+combinations). Both tests have run successfully on a C64 and a Vic20.
+They ought to run on C16, +4 and the PET series as well. The tests
+stop with BRK, if the opcode $CB does not work as expected. Successful
+operation ends in RTS. As the tests are very slow, they print dots on
+the screen while running so that you know that the machine has not
+jammed. On computers running at 1 MHz, the first test prints
+approximately one dot every four seconds and a total of 2048 dots,
+whereas the second one prints half that amount, one dot every seven
+seconds.
+
+If the tests fail on your machine, please let us know your processor's
+part number and revision. If possible, save the executable (after it
+has stopped with BRK) under another name and send it to us so that we
+know at which stage the program stopped.
+
+The following program is a Commodore 64 executable that Marko M"akel"a
+developed when trying to find out how the V flag is affected by SBX.
+(It was believed that the SBX affects the flag in a weird way, and
+this program shows how SBX sets the flag differently from SBC.)  You
+may find the subroutine at $C150 useful when researching other
+undocumented instructions' flags. Run the program in a machine
+language monitor, as it makes use of the BRK instruction. The result
+tables will be written on pages $C2 and $C3.
+
+
+begin 644 sbx-c100
+M`,%XH`",#L&,$,&,$L&XJ8*B@LL7AOL(:(7\N#BM#L$M$,'M$L$(Q?OP`B@`
+M:$7\\`,@4,'N#L'0U.X0P=#/SB#0[A+!T,<``````````````)BJ\!>M#L$M
+L$,'=_\'0":T2P=W_PM`!8,K0Z:T.P2T0P9D`PID`!*T2P9D`PYD`!HL2N@
+M3Y$KH%R1*XII>ZBQ*Z!3D2N@8)$KBFE_J+$KH%61*Z!BD2OX.+BE^^;\Q_S8
+L"&B%_3BXI?OF_,?\"&A%_?`!`.;[T-_F_-#;RA"M8!@X&#CFYL;&Q\?GYP#8
+`
+end
+
+
+
+
+                 
+6510 features
+
+
+   o  PHP always pushes the Break (B) flag as a `1' to the stack.
+      Jukka Tapanim"aki claimed in C=lehti issue 3/89, on page 27 that the
+      processor makes a logical OR between the status register's bit 4 
+      and the bit 8 of the stack pointer register (which is always 1).
+      He did not give any reasons for this argument, and has refused to clarify
+      it afterwards. Well, this was not the only error in his article...
+
+   o  Indirect addressing modes do not handle page boundary crossing at all.
+      When the parameter's low byte is $FF, the effective address wraps
+      around and the CPU fetches high byte from $xx00 instead of $xx00+$0100.
+      E.g. JMP ($01FF) fetches PCL from $01FF and PCH from $0100,
+      and LDA ($FF),Y fetches the base address from $FF and $00.
+
+   o  Indexed zero page addressing modes never fix the page address on
+      crossing the zero page boundary.
+      E.g. LDX #$01 : LDA ($FF,X) loads the effective address from $00 and $01.
+
+   o  The processor always fetches the byte following a relative branch
+      instruction. If the branch is taken, the processor reads then the
+      opcode from the destination address. If page boundary is crossed, it
+      first reads a byte from the old page from a location that is bigger
+      or smaller than the correct address by one page.
+
+   o  If you cross a page boundary in any other indexed mode,
+      the processor reads an incorrect location first, a location that is
+      smaller by one page.
+
+   o  Read-Modify-Write instructions write unmodified data, then modified
+      (so INC effectively does LDX loc;STX loc;INX;STX loc)
+
+   o  -RDY is ignored during writes
+      (This is why you must wait 3 cycles before doing any DMA --
+      the maximum number of consecutive writes is 3, which occurs
+      during interrupts except -RESET.)
+
+   o  Some undefined opcodes may give really unpredictable results.
+
+   o  All registers except the Program Counter remain unmodified after -RESET.
+      (This is why you must preset D and I flags in the RESET handler.)
+
+
+                
+Different CPU types
+
+
+The Rockwell data booklet 29651N52 (technical information about R65C00 
+microprocessors, dated October 1984), lists the following differences between
+NMOS R6502 microprocessor and CMOS R65C00 family:
+
+
+      
+     1. Indexed addressing across page boundary.
+             NMOS: Extra read of invalid address.
+             CMOS: Extra read of last instruction byte.
+
+      
+     2. Execution of invalid op codes.
+             NMOS: Some terminate only by reset. Results are undefined.
+             CMOS: All are NOPs (reserved for future use).
+
+      
+     3. Jump indirect, operand = XXFF.
+             NMOS: Page address does not increment.
+             CMOS: Page address increments and adds one additional cycle.
+
+      
+     4. Read/modify/write instructions at effective address.
+             NMOS: One read and two write cycles.
+             CMOS: Two read and one write cycle.
+
+      
+     5. Decimal flag.
+             NMOS: Indeterminate after reset.
+             CMOS: Initialized to binary mode (D=0) after reset and interrupts.
+
+      
+     6. Flags after decimal operation.
+             NMOS: Invalid N, V and Z flags.
+             CMOS: Valid flag adds one additional cycle.
+
+      
+     7. Interrupt after fetch of BRK instruction.
+             NMOS: Interrupt vector is loaded, BRK vector is ignored.
+             CMOS: BRK is executed, then interrupt is executed.
+
+
+
+                
+6510 Instruction Timing
+
+
+  The NMOS 6500 series processors always perform at least two reads
+for each instruction. In addition to the operation code (opcode), they
+fetch the next byte. This is quite efficient, as most instructions are
+two or three bytes long.
+
+  The processors also use a sort of pipelining. If an instruction does
+not store data in memory on its last cycle, the processor can fetch
+the opcode of the next instruction while executing the last cycle. For
+instance, the instruction EOR #$FF truly takes three cycles. On the
+first cycle, the opcode $49 will be fetched. During the second cycle
+the processor decodes the opcode and fetches the parameter #$FF. On
+the third cycle, the processor will perform the operation and store
+the result to accumulator, but simultaneously it fetches the opcode
+for the next instruction. This is why the instruction effectively
+takes only two cycles.
+
+  The following tables show what happens on the bus while executing
+different kinds of instructions.
+
+  Interrupts
+
+
+     NMI and IRQ both take 7 cycles. Their timing diagram is much like
+     BRK's (see below). IRQ will be executed only when the I flag is
+     clear. IRQ and BRK both set the I flag, whereas the NMI does not
+     affect its state.
+
+     The processor will usually wait for the current instruction to
+     complete before executing the interrupt sequence. To process the
+     interrupt before the next instruction, the interrupt must occur
+     before the last cycle of the current instruction.
+
+     There is one exception to this rule: the BRK instruction. If a
+     hardware interrupt (NMI or IRQ) occurs before the fourth (flags
+     saving) cycle of BRK, the BRK instruction will be skipped, and
+     the processor will jump to the hardware interrupt vector. This
+     sequence will always take 7 cycles.
+
+     You do not completely lose the BRK interrupt, the B flag will be
+     set in the pushed status register if a BRK instruction gets
+     interrupted. When BRK and IRQ occur at the same time, this does
+     not cause any problems, as your program will consider it as a
+     BRK, and the IRQ would occur again after the processor returned
+     from your BRK routine, unless you cleared the interrupt source in
+     your BRK handler. But the simultaneous occurrence of NMI and BRK
+     is far more fatal. If you do not check the B flag in the NMI
+     routine and subtract two from the return address when needed, the
+     BRK instruction will be skipped.
+
+     If the NMI and IRQ interrupts overlap each other (one interrupt
+     occurs before fetching the interrupt vector for the other
+     interrupt), the processor will most probably jump to the NMI
+     vector in every case, and then jump to the IRQ vector after
+     processing the first instruction of the NMI handler. This has not
+     been measured yet, but the IRQ is very similar to BRK, and many
+     sources state that the NMI has higher priority than IRQ. However,
+     it might be that the processor takes the interrupt that comes
+     later, i.e. you could lose an NMI interrupt if an IRQ occurred in
+     four cycles after it.
+
+     After finishing the interrupt sequence, the processor will start
+     to execute the first instruction of the interrupt routine. This
+     proves that the processor uses a sort of pipelining: it finishes
+     the current instruction (or interrupt sequence) while reading the
+     opcode of the next instruction.
+
+     RESET does not push program counter on stack, and it lasts
+     probably 6 cycles after deactivating the signal. Like NMI, RESET
+     preserves all registers except PC.
+
+
+  Instructions accessing the stack
+
+
+     BRK
+
+        #  address R/W description
+       --- ------- --- -----------------------------------------------
+        1    PC     R  fetch opcode, increment PC
+        2    PC     R  read next instruction byte (and throw it away),
+                       increment PC
+        3  $0100,S  W  push PCH on stack (with B flag set), decrement S
+        4  $0100,S  W  push PCL on stack, decrement S
+        5  $0100,S  W  push P on stack, decrement S
+        6   $FFFE   R  fetch PCL
+        7   $FFFF   R  fetch PCH
+
+
+     RTI
+
+        #  address R/W description
+       --- ------- --- -----------------------------------------------
+        1    PC     R  fetch opcode, increment PC
+        2    PC     R  read next instruction byte (and throw it away)
+        3  $0100,S  R  increment S
+        4  $0100,S  R  pull P from stack, increment S
+        5  $0100,S  R  pull PCL from stack, increment S
+        6  $0100,S  R  pull PCH from stack
+
+
+     RTS
+
+        #  address R/W description
+       --- ------- --- -----------------------------------------------
+        1    PC     R  fetch opcode, increment PC
+        2    PC     R  read next instruction byte (and throw it away)
+        3  $0100,S  R  increment S
+        4  $0100,S  R  pull PCL from stack, increment S
+        5  $0100,S  R  pull PCH from stack
+        6    PC     R  increment PC
+
+
+     PHA, PHP
+
+        #  address R/W description
+       --- ------- --- -----------------------------------------------
+        1    PC     R  fetch opcode, increment PC
+        2    PC     R  read next instruction byte (and throw it away)
+        3  $0100,S  W  push register on stack, decrement S
+
+
+     PLA, PLP
+
+        #  address R/W description
+       --- ------- --- -----------------------------------------------
+        1    PC     R  fetch opcode, increment PC
+        2    PC     R  read next instruction byte (and throw it away)
+        3  $0100,S  R  increment S
+        4  $0100,S  R  pull register from stack
+
+
+     JSR
+
+        #  address R/W description
+       --- ------- --- -------------------------------------------------
+        1    PC     R  fetch opcode, increment PC
+        2    PC     R  fetch low address byte, increment PC
+        3  $0100,S  R  internal operation (predecrement S?)
+        4  $0100,S  W  push PCH on stack, decrement S
+        5  $0100,S  W  push PCL on stack, decrement S
+        6    PC     R  copy low address byte to PCL, fetch high address
+
+

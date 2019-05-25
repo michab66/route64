@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-actions.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-actions" modified="$Date: 2004/09/04 19:41:29 $">
+
+<h3>File menu</h3>
+
+<h4><img src="../resources/fldr_obj.gif" 
+         name="open" 
+         alt="Open image..."/>Open image...</h4>
+
+<p>Opens a file load dialog that allows to select an image file to
+attach to the emulation. The same can be acomplished by simply
+dragging the file from the file system explorer and dropping it on
+the emulator window.</p>
+
+<h4><img src="../resources/ExitApp.gif" 
+         name="Graphic1" 
+         ALT="Open image..." 
+         ALIGN="BOTTOM" 
+         WIDTH="14"
+         HEIGHT="14"
+         BORDER="0"/>Exit...</h4>
+<p>Closes Route 64.</p>
+
+<h3>Edit menu</h3>
+
+<p>Allows to select the primary input device. After starting Route 64
+the primary input device is the keyboard. If one of the joystick
+emulations is selected, the handling of some keys changes: The keys
+for cursor up, down, left, right now emulate the joystick directions
+and the space key represents the joystick's fire button.</p>
+
+<p>Joystick One</p>
+<p>Joystick Two</p>
+<p>Keyboard</p>
+
+<h3>Tools menu</h3>
+<h4><img src="../resources/Stop24.gif" 
+         name="Reset icon."
+         alt="Reset" 
+         align="BOTTOM"
+         width="24"
+         height="24"
+         border="0"/>Reset</h4>
+
+<p>Resets the emulation into its initial state.</p>
+
+<p>Show system monitor...<br/>Shows a debugger window that allows to
+set breakpoints and perform single step instruction tracing.</p>
+
+<p>Original size<br/>Restores the size of the emulator window to its
+initial dimensions.</p>
+
+<h3>Help menu</h3>
+
+<p>Help...<br/>Opens the application's help system. The help system is
+only available if JavaHelp is installed.</p>
+
+<p>About...<br/>Shows information regarding the version and build
+number of Route 64. Allows also to display the vales of the system
+properties used by Java. Normally used for documenting problems in
+Route 64.</p>
+
+</chapter>

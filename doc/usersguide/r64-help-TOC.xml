@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- $Id: r64-help-TOC.xml 11 2008-09-20 11:06:39Z binzm $ -->
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+  "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+
+<toc version="1.0">
+  <tocitem 
+    text = 
+      "What is Route64?" 
+     target =
+      "r64-whatis"/>
+  <tocitem
+    text =
+      "System requirements" 
+    target =
+      "r64-system-requirements"/>
+  <tocitem 
+    text="Installation" 
+    target="r64-installation"/>
+  <tocitem 
+    text="Using data images" 
+    target="r64-loading"/>
+  <tocitem 
+    text="Keyboard mapping" 
+    target="r64-keyboard"/>
+  <tocitem 
+    text="Terminology" 
+    target="r64-terminology"/>
+  <tocitem 
+    text="Features" 
+    target="r64-features"/>
+  <tocitem 
+    text="Licensing" 
+    target="r64-licensing"/>
+</toc>

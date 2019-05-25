@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- $Id: r64-keyboard.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-keyboard" modified="$Date: 2004/09/04 19:41:29 $">
+
+<h2>Joystick mapping</h2>
+
+<p>Joystick input is active if one of the Joystick buttons
+(<img src="../resources/joystick1_obj.gif" 
+         name="Graphic1" 
+         alt="Button symbol for joystick 1"/> 
+or <img src="../resources/joystick2_obj.gif" 
+         name="joystick2_obj"
+         alt="Button symbol for joystick 2"/>) 
+on the toolbar or from the menu is selected. The list below shows the Joystick key
+mappings:</p>
+
+<ul>
+<li>Joystick up: Up key</li>
+<li>Joystick left: Left key</li>
+<li>Joystick right: Right key</li>
+<li>Joystick down: Down key</li>
+<li>Joystick button: Space key</li>
+</ul>
+
+<p>The remaining keys are handled as normal keyboard input.</p>
+
+<h2>Keyboard mapping</h2>
+
+<p>Keyboard input is active if the keyboard button 
+(<img src="../resources/keyboard_obj.gif" 
+         name="keyboard_obj"
+         ALT="Button symbol for keyboard"/>)
+on the toolbar or from the menu is selected.</p>
+<p>In general Route 64 offers the simplest keyboard mapping that is
+possible: For all keys on a Commodore 64 keyboard that have a direct equivalent 
+on a modern workstation keyboard this mapping is one to one, i.e. just
+press the key on the keyboard and get the expected character on
+the screen.</p>
+
+<p>For Commodore 64 specific keys that do not have a direct equivalent the
+mapping is shown here:</p>
+
+<table width="680" border="1" cellpadding="4" cellspacing="3">
+	<col width="150"/>
+	<col width="400"/>
+	<thead>
+		<tr valign="TOP">
+			<td width="199">
+				<p>C64 Key</p>
+			</td>
+			<td width="454">
+				<p>Keyboard key</p>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<TR VALIGN="TOP">
+			<td width="199">
+				<p>&#8592; (Arrow Right)</p>
+			</td>
+			<TD WIDTH="454">
+				<p>Enter this key as Unicode character 0x2190. This character is
+				not normally needed on the Commodore 64, so it is deliberately
+				not mapped conveniently. It can be generated though if you use OS
+				specific mechanisms to directly enter the Unicode.</p>
+			</TD>
+		</TR>
+		<TR VALIGN="TOP">
+			<TD WIDTH="199">
+				<p>&#163; (Pound sign)</p>
+			</TD>
+			<TD WIDTH="454">
+				<p>Represented as Unicode character 0x00a3. Directly available
+				only on certain keyboards, like the English and Italian. Since
+				this character is not commonly used there is no convenience
+				mapping on keyboards that do not directly offer this character.</p>
+			</TD>
+		</TR>
+		<TR VALIGN="TOP">
+			<TD WIDTH="199">
+				<p>RUN<BR/>STOP</p>
+			</TD>
+			<TD WIDTH="454">
+				<p>ESC key is stop, Shift-ESC is run functionality</p>
+			</TD>
+		</TR>
+		<TR VALIGN="TOP">
+			<TD WIDTH="199">
+				<p>Restore</p>
+			</TD>
+			<TD WIDTH="454">
+				<p>Break, remember the Commodore 64 key combination RUN/STOP with
+				Restore, this results in a soft reset.</p>
+			</TD>
+		</TR>
+		<TR VALIGN="TOP">
+			<TD WIDTH="199">
+				<p>Clear/Home</p>
+			</TD>
+			<TD WIDTH="454">
+				<p>Shift+Home / Home</p>
+			</TD>
+		</TR>
+		<TR VALIGN="TOP">
+			<TD WIDTH="199">
+				<p>Commodore key</p>
+			</TD>
+			<TD WIDTH="454">
+				<p>Control</p>
+			</TD>
+		</TR>
+	</tbody>
+</table>
+
+</chapter>

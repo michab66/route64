@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-dg-09-rulez.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-dg-06-references" modified="$Date: 2005/09/17 12:35:25 $">
+
+<!-- TODO
+Redewendungen:
+
+protected final methods.
+libraries.
+source file encoding utf-8
+-->
+
+<H1>1. File header</H1>
+<P>Each source file starts with a file
+header containing a project reference, some statement describing the
+copyright policy for that piece of source and information regarding
+this file's version. The versioning info should at least include a
+version number, optional are date of last change and the name of the
+last person working on the source. The final element of the file
+header contains the copyright definitions for the source file.
+</P><P>
+The header has to be limited by Java
+standard multi line comments /* */ and not Javadoc comments.
+</P>
+<pre>
+/*
+ * $Id: r64-dg-09-rulez.chp 7 2008-02-07 10:14:35Z binzm $
+ *
+ * Project: project name
+ *
+ * Copyright (c) 2008 ...
+ */
+</pre>
+
+<H1>2. Class references and context.</H1>
+<P>This means the section in the source
+file that is outside of the real class definition -- the package and
+import clauses. Following the file header the package definition for
+the class has to be specified with no empty lines between file header
+and package clause. The package clause may not be left out, each
+class has to be member of a package.</P>
+<P STYLE="margin-bottom: 0cm">Delimited by one empty line follow the
+import clauses. It is not defined wether one import clause has to be
+specified per imported type or wether package import are used. This
+has to be decided on a case by case basis. The driver behind the
+decision should be clarity: For instance if when referencing the java
+I/O types in most cases a package import is easier to read since in
+most cases a number of types of this package have to be used. On the
+other hand, when using functionality from the <CODE>java.util</CODE>
+package it is often the case that a single type is all that is
+needed, e.g. Vector -- in that case a fully qualified import of this
+type makes sense. A rule of thumb is, if more than three types have
+to be imported from a package, the import of the package is clearer
+than importing each single type.</P>
+<P STYLE="margin-bottom: 0cm">The last import clause has to be
+followed by three empty lines.</P>
+<H1>3. Class header and definition</H1>
+<P STYLE="margin-bottom: 0cm">The class header is comprised by a
+javadoc comment. All rules defined by javadoc are valid. All javadoc
+tags are optional. One fact should be stressed: When writing the
+class comment, clearly specify what the responsibilities of this
+class are. If it leads to problems to work out a clear picture of a
+classes responsibilities this is in most cases a sign of poor
+analysis. Keep the javadoc rule in mind, that the first sentence of
+the class header is printed in class overview tables while the
+complete text is printed the class documentation and structure your
+comments accordingly.</P>
+<P STYLE="margin-bottom: 0cm">Use the @see tag. Most classes are part
+of a small set of related types, sometimes called 'clique', refer to
+that related types. But resist and do not include the trivial
+references to superclasses and implemented interfaces, these are
+generated automatically by the java doc generator.</P>
+<P STYLE="margin-bottom: 0cm">If you are using html decoration at all
+then sparse. Line break tags as well as code tags are fine, but not
+much more. Keep in mind that the documentation is also viewed in
+developer's text editors where it is not that easy to read html.</P>
+<H1>4. Attribute definitions.</H1>
+<P STYLE="margin-bottom: 0cm">The first part of the class definition
+has to be the declaration of the attributes. These start after the
+first opening curly brace of the class definition and are always
+followed by three empty lines. Attribute names have to start with an
+underscore. This clearly documents wether variables are method-local
+or attributes when writing or reading code. Attributes have to be
+private as long as no obvious technical reasons require some kind of
+other visibility. Public attributes as required by most database
+mapping engines are fine. Protected attributes because of performance
+reasons are not. 
+</P>
+<P STYLE="margin-bottom: 0cm">Each attribute has to be described with
+a javadoc comment. Refer to the methods that use the attribute and
+describe special cases, e.g. wether a reference may be null. Declare
+attributes that won't change over the lifetime of an object as final.</P>
+<H1>5. Method definitions</H1>
+<P>The attribute definitions are followed by the method definitions.
+Again the method definitions are delimited by three empty lines and
+have to start with a javadoc comment. Lightweight comments are
+allowed, i.e. the obvious doesn't have to be documented. But be
+careful, sometimes the definition of what is obvious differs between
+the implementer's und the user's point of view. If in doubt decide
+for the documentation. Try to keep the visibility as narrow as
+possible. In case a method is really a function not using any of the
+local state of the object mark it to be <CODE>static</CODE>.</P>
+<H1>6. Indentation Rules</H1>
+<P>No tab characters are allowed for indentation. A single
+indentation unit are two consecutive spaces. Line lengths have to be
+limited to 80 characters to allow for editing and printing of the
+source code.</P>
+<pre>
+/**
+ * The node element that is used to build lists. Holds two references,
+ * car and cdr.
+ * Car holds a reference to the value of that node. Cdr refers to the
+ * rest of the list and may be NIL in case this was the last node.
+ */
+</pre>
+<pre>
+/**
+ * Returns the sublist of list obtained by omitting the first k
+ * elements. It is an error if list has fewer than k elements.
+ */
+public FirstClassObject listTail( long k )
+ throws RuntimeX
+{
+ if ( k &gt; length() )
+   throw new RuntimeX( &quot;Index out of bounds: &quot; + k );
+
+ FirstClassObject result = this;
+
+ for ( long i = 0 ; i &lt; k ; i++ )
+   result = ((Cons)result)._cdr;
+
+ return result;
+}
+</pre>
+
+<H1>7. General advice</H1>
+<UL>
+	<li><P>The visibility specifiers should
+	be always as narrow as possible. Actively think about hiding
+	complexity by using package local, aka default, visibility for
+	classes, methods and attributes.</P></li>
+	<li><P>In cases where you do not have a
+	clean solution for a coding problem, or where you identify potential
+	problems in the code, may it be written by you or a colleague leave
+	a todo tag in the code. That looks like TODO(name), where the name
+	should make it easy to find the author of the TODO. This tag has to
+	be followed by a detailed description of what the reason for that
+	todo is and if maybe first ideas of a solution exist. It is a common
+	problem to find undcommented todo tags where it is not obvious why
+	the todo was placed in the source.</P></li>
+	<li><P STYLE="margin-bottom: 0cm">Documentation errors &#150; even
+	typos &#150; count as defects.</P></li>
+	<li><P STYLE="margin-bottom: 0cm">Do not use low level technical
+	comments like 'Add the foo to the hashtable'. If something like that
+	is not obvious your writing wrong code. Instead use higher level
+	comments like 'Collect all the foos that we need for the next
+	computation in the hashtable'.</P></li>
+</UL>
+<h1>Explicit No!</h1>
+<ul>
+	<li><p>Do not include
+	automatically generated change logs in the source files &#150;
+	whatever configuration management tool used is responsible to make
+	information of that type available.</p></li>
+	<li><p>Do not document defect numbers in
+	the source code. Again this is a task for the configuration
+	management system.</p></li>
+	<li><p>Do not use the fully qualified
+	type names in the source code because your IDE helps you with that.
+	This is only allowed if a type collision is possible and has to be
+	explicitly commented. Instead use the import statement to get the
+	required types.</p></li>
+</ul>
+</chapter>

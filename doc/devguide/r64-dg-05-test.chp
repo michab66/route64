@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-dg-05-test.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-dg-test" modified="$Date: 2005/07/21 20:03:12 $">
+
+<p>This chapter lists the test cases used to check various
+aspects of the Route 64 implementation.</p>
+
+<p>Graphics modes:</p>
+<ul>
+<li>RasterCharacterMulti (Multicolor character mode): Pooyan</li>
+<li>RasterCharacterExtended (Extended Character mode): Quack Attack</li>
+<li>RasterBitmap (Single Color Bitmap): Yes Prime Minister</li>
+<li>RasterBitmapMulti (Multi Color Bitmap mode): Q-Bert</li>
+</ul>
+<p>Sound modes:</p>
+<ul>
+<li>To be done.</li>
+</ul>
+</chapter>

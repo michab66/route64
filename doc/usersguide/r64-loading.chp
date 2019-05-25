@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- $Id: r64-loading.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-loading" modified="$Date: 2004/12/11 10:57:13 $">
+
+<p>Image files are files that contain a complete copy of an ancient
+Commodore 64 data medium, like a diskette or a tape. An image file
+represents a single file in the host operating system, but since
+it represents a floppy disk or tape to the emulator it can
+internally hold many files for the Commodore 64. Image files are used
+to load existing software like games into the emulator. They can be
+obtained from internet sites like
+<a href="http://www.c64.com">www.c64.com</a>,
+many others exist.</p>
+
+<p>The following image file formats are supported by Route 64:</p>
+
+<ul>
+	<li/><p>.d64 &#8211; A copy of a Commodore 1541 floppy disk.</p>
+	<li/><p>.t64 &#8211; A Datasette tape.</p>
+	<li/><p>.p00 &#8211; A binary format only able to hold a single file.</p>
+	<li/><p>.prg &#8211; A raw C64 file.</p>
+</ul>
+
+<p>To execute the files that are in an image file several steps have
+to be performed. The first one is to <i>attach</i> an image file to
+the emulator, this corresponds to inserting a floppy disk into the
+disk drive or putting a tape into the Datasette. To attach a file to
+Route 64</p>
+
+<ul>
+	<li/><p>Drag the image file on the Route 64 main window and drop it
+	there.</p>
+	<li/><p>Use File/Open... from the menu (or the <img src="../resources/fldr_obj.gif" 
+         name="open" 
+         alt="Attach image toolbar symbol"/>
+	Toolbar button) and select the image file.</p>
+</ul>
+
+<p>If the attach operation was successful, the name of the attached
+image file is displayed in the message area at the bottom of the main
+window. After the image file is attached to the emulator one of the
+Commodore 64 files contained can be loaded. Again there are serveral
+options:</p>
+
+<ul>
+	<li/><p>The load combo box on the toolbar shows the files that are
+	contained in the image. A press on the &lt;TODO link image&gt;
+	button to the right of the combo box results in a load of the shown
+	file plus an attempt to <code>RUN</code> the loaded file. The <code>LOAD</code>
+	operation that is perfomed is a normal load to the begin of
+	the BASIC memory, the equivalent C64 BASIC statement is <code>LOAD
+	&quot;&lt;selected file&gt;&quot;,8</code>, where the <code>8</code>
+	designates the floppy drive and varies automatically depending on
+	the attaced image file. If the Commodore 64 file has to be loaded
+	with the statement LOAD &quot;&lt;selected file&gt;&quot;,8,1
+	meaning a load to a memory address contained in the file, the
+	toolbar load should not be used.</p>
+	<li/><p>The <code>LOAD</code> BASIC statement in the emulator works
+	like in the original. Type in the necessary <code>LOAD</code>
+	statement and <code>RUN</code> the loaded file just as you would do
+	on a real Commodore 64. As a reminder, there are two basic <code>LOAD</code>
+	statements:<br/>The first one is <code>LOAD &quot;&lt;file to
+	load&gt;&quot;[,device]</code>, where <code>device</code> is either
+	1 for a load from a Datasette tape or 8 for a load from the 1541
+	floppy drive. On the orginal Commodore 64, if <code>device</code> is
+	not specified the system tries to load the file from tape. Route 64
+	is smarter and adds the right <code>device</code> based on the
+	attached image file. This form of the LOAD statement loads a BASIC
+	program into memory and requires a RUN command to actually start
+	execution. Note that technically many games on the Commodore 64
+	where BASIC programs, consisting of a single line of BASIC that
+	jumped to the start address of the actual assembler code contained
+	in a large data area that was located in BASIC RAM behind the single
+	BASIC line.<br/>
+	The second form of the <code>LOAD</code> statement
+	is an extension of the first: The statement <code>LOAD &quot;&lt;file
+	to load&gt;&quot;[,device,positionFlag]</code> adds a positionFlag
+	to the statement. If this is not specified or specified as 0 (zero)
+	that means the file should be loaded to the begin of the BASIC
+	memory. A value of 1 for the positionFlag means that the file is to
+	be loaded to a start address contained inside the file itself. This
+	form has sometimes been used for games that had an autostart
+	feature, i.e. required no explicit <code>RUN</code> statement after
+	the <code>LOAD</code> operation.</p>
+	<li/><p>The emulator also supports a less known feature of the
+	Commodore 64 that triggered the execution of a LOAD and RUN
+	statement by entering the key combination Shift-RUN/STOP. This
+	results in the load of the first file from the attached image file
+	and the execution of a RUN statement.</p>
+	<li/><p>Finally, Route64 allows to attach an image and define the
+	file to load from the command line by using the command <code>java
+	-jar route64*.jar [&lt;imageFile&gt; &lt;initialFile&gt;]</code>.
+	The imageFile is the filename name of an image file that is to be
+	attached.  The initialFile is the file to load and start from inside
+	the image. If this parameter is specified on the command line, the
+	emulator tries to load that file and afterwards a RUN is tried. If
+	no initial file is specified, the image file is loaded and further
+	loading of files has to be done by the user with the 64's BASIC LOAD
+	instruction.</p>
+</ul>
+</chapter>

@@ -1,0 +1,119 @@
+<html>
+<head>
+<title>Knowledge Base Article #530</title>
+<meta name="robots" content="noindex,nofollow">
+</head>
+<body bgcolor = "#ffffff" link = "#0000ff" text = "#000000" vlink = "#0000ff">
+<a name = "top"></a>
+<h1>Article 530</h1>
+<a href = "./"><b>search instead</b></a> | <a href = "ckb.cgi?mode=all"><b>all
+articles</b></a> | <a href = "topics.html"><b>select by topic</b></a>
+<b><isindex prompt = "select article number:"></b>
+<hr noshade>
+<table width = 100%><tr><td align = left valign = top bgcolor = "#e0e0ff">
+<pre>
+\nFrom root Sun Aug  9 16:37:39 1998
+Received: from uhura.concentric.net by oa.ptloma.edu (AIX 4.1/UCB 5.64/4.03)
+          id AA31084; Sun, 9 Aug 1998 16:37:38 -0700
+From: Cdkaiser@concentric.net
+Received: from voyager.cris.com (voyager [206.173.115.82])
+	by uhura.concentric.net (8.8.8/(98/05/18 5.10))
+	id TAA12922; Sun, 9 Aug 1998 19:33:31 -0400 (EDT)
+	[1-800-745-2747 The Concentric Network]
+Errors-To: &lt;Cdkaiser@concentric.net&gt;
+Received: by voyager.cris.com (8.8.5) id TAA12590; Sun, 9 Aug 1998 19:33:31 -04
+00 (EDT)
+Date: Sun, 9 Aug 1998 19:33:31 -0400 (EDT)
+Message-Id: &lt;199808092333.TAA12590@voyager.cris.com&gt;
+To: ckaiser@oa.ptloma.edu
+Subject: Converting Hz to SID frequency values
+Status: RO
+
+
+&gt;Path: news!global-news-master!newsfeed.concentric.net!howland.erols.net!nnt
+p.abs.net!newsfeed1.telenordia.se!newsfeed1.funet.fi!news.cs.hut.fi!not-for-mai
+&gt;From: Marko =?ISO-8859-1?Q?M=E4kel=E4?= &lt;Marko.Makela@hut.fi&gt;
+&gt;Newsgroups: comp.sys.cbm
+&gt;Subject: Re: Converting Hz to SID frequency values
+&gt;Date: 09 Aug 1998 10:25:17 +0300
+&gt;Organization: Helsinki University of Technology, CS lab
+&gt;Lines: 26
+&gt;Distribution: world
+&gt;Message-ID: &lt;7llnoymxb6.fsf@siphon.hut.fi&gt;
+&gt;References: &lt;bloody.hell.it.still.isnt.fixed.is.it.483259@cris.com&gt;
+&gt;NNTP-Posting-Host: siphon.hut.fi
+&gt;X-Newsreader: Gnus v5.3/Emacs 19.34
+&gt;Xref: news comp.sys.cbm:99701
+
+&gt;&gt;&gt;&gt;&gt; "Cameron" == Cameron Kaiser &lt;cdkaiser@delete.these.four
+.words.concentric.net&gt; writes:
+
+Cameron&gt; Is there an easy formula for getting SID FREQ HI/LO values
+Cameron&gt; from an arbitrary frequency value in Hz?
+
+Yes, there is:
+
+	frequency = value / 16777216 * Phi2
+
+or
+
+	value = frequency * 16777216 / Phi2
+
+where
+
+	Phi2 = 14318181 / 14 Hz  (NTSC)
+or
+	Phi2 = 17734472 / 18 Hz  (PAL).
+
+
+The SID has a 24-bit waveform accumulator, and it adds the frequency
+value to it on every clock cycle.  The most significant 8 bits of the
+waveform accumulator (after the waveform function has been applied to
+it) are used for output.
+
+	Marko
+
+&gt;From: John Iannetta &lt;76703.4244@CompuServe.COM&gt;
+&gt;Subject: Re: Converting Hz to SID frequency values
+&gt;References: &lt;35CCFD4A.37C@ctaz.com&gt;
+&gt;Organization: CompuServe, Inc. (1-800-689-0736)
+&gt;Message-ID: &lt;#StQbP0w9GA.380@ntawwabp.compuserve.com&gt;
+&gt;Newsgroups: comp.sys.cbm
+&gt;Date: Sat, 08 Aug 1998 23:14:42 -0400
+&gt;Path: news!global-news-master!newsfeed.concentric.net!newshub.northeast.ver
+io.net!news.maxwell.syr.edu!news.cis.ohio-state.edu!arl-news-svc-3.compuserve.c
+&gt;Lines: 17
+&gt;Xref: news comp.sys.cbm:99718
+
+    Cameron Kaiser said,
+
+"Is there an easy formula for getting SID FREQ HI/LO values from an arbitrary
+frequency value in Hz?".
+
+    Well, I have one formula here that requires integrating in the complex
+plane, so I guess that you want the other one:
+
+Y=K*F:H=INT(Y/256):L=Y-256*H
+
+where K=2*24/System Clock Frequency
+=16.4044 for NTSC and 17.0284 for PAL.
+
+-- 
+When backing up your hard drive, shift into reverse gear S M O O T H L Y.
+
+                      John
+</pre>
+</td></tr></table>
+<p>
+<b><a href = "./">search instead</a></b> | <b><a href =
+"ckb.cgi?mode=all">all articles</a></b> | <b><a href =
+"#top">back to the top of this article</a></b><p>
+All articles are the intellectual property of the original author and any/all
+copyrights within this article lie with the original author. All other content
+and software is copyright &copy;1998-2004
+Cameron Kaiser. All rights reserved.
+No warranty is expressed or implied concerning the veracity, completeness or
+bias of data expressed in this or any article.
+<p>
+</body>
+</html>

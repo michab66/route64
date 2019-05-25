@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-system-requirements.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-system-requirements" modified="$Date: 2005/12/29 10:58:20 $">
+
+<p>The minimum hardware needed to be able to successfully run Route 64
+should be in the order of a 400 Mhz x86 with around 64 MB of memory.</p>
+
+<p>Route 64 requires an
+<a href="http://java.sun.com/j2se/1.4.2/download.html">Java Runtime Environment (JRE) version Java 2 v1.4</a>
+or better.  Note that the hardware requirements of the JRE also apply and
+override the vales given above.</p>
+
+<p>To use the WebStart automatic updates an installation of 
+<a href="http://java.sun.com/products/javawebstart/">Java WebStart</a> is 
+needed.</p>
+
+</chapter>

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-whatis.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-whatis" modified="$Date: 2004/07/06 21:07:20 $">
+
+<p>Route 64 is a Commodore 64 emulator.  It is written in Java and should
+thus be highly portable.  You can use it to either play around on the
+BASIC command line that the 64 had or to get some game images and play
+games again that you missed for a long time.</p>
+
+<p><img
+  src="images/Route64Xp.gif"
+  name="A plain 64 screen in well-known blue flavours." 
+  border="0"/></p>
+
+<p>This emulator supports enough of the Commodore 64's features to be
+able to actually run more complex games.  It emulates the video chip VIC, the 
+IO and timer chips (CIAs) and finally even the sound chip.</p>
+
+<p>Note that Route 64 is not perfect. It is also not a cycle-exact simulation 
+of the Commodore 64 which is the main reason that some games found on the 
+internet are not working.  But it's getting better all the time...</p>
+
+</chapter>

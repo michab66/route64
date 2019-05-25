@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- Route 64 User's Guide -->
+<!-- $Id: r64-help-map.jhm 7 2008-02-07 10:14:35Z binzm $ -->
+
+<!-- The central hyperlink mapping database. -->
+
+<!DOCTYPE 
+  map PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+  "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+  <mapID target="top" url="index.html" />
+  <mapID target="r64-actions" url="r64-actions.html" />
+  <mapID target="r64-installation" url="r64-installation.html" />
+  <mapID target="r64-keyboard" url="r64-keyboard.html" />
+  <mapID target="r64-licensing" url="r64-licensing.html" />
+  <mapID target="r64-links" url="r64-links.html" />
+  <mapID target="r64-loading" url="r64-loading.html" />
+  <mapID target="r64-system-requirements" url="r64-system-requirements.html" />
+  <mapID target="r64-terminology" url="r64-terminology.html" />
+  <mapID target="r64-whatis" url="r64-whatis.html" />
+</map>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- $Id: route64.jnlp 7 2008-02-07 10:14:35Z binzm $ -->
+<!-- JNLP File for the Route64 Commodore 64 emulator -->
+
+<jnlp spec="1.0+"
+      codebase="http://route64.sourceforge.net/jnlp"
+      href="route64.jnlp">
+
+  <information>
+    <title>Route64</title>
+    <vendor>Michael G. Binz</vendor>
+    <homepage href="http://route64.sourceforge.net"/>
+    <description>A Commodore 64 emulator</description>
+    <description 
+      kind="short">As a Commodore 64 emulator too simple, but as a Java 
+      application pretty geek.</description>
+    <icon href="../resources/Route64.jpg"/>
+    <offline-allowed/>
+  </information>
+
+  <resources>
+    <!-- First try it with a plain jdk ... -->
+    <j2se version="1.4"/>
+    <!-- ...and if that's not available take whatever exists and is better -->
+    <j2se version="1.4+"/>
+    <jar href="route64.jar"/>
+  </resources>
+
+  <application-desc 
+    main-class="de.michab.apps.route64.Commodore64"/>
+</jnlp>

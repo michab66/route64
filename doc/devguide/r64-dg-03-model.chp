@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-dg-03-model.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter 
+  id="r64-dg-03-model" 
+  modified="$Date: 2005/07/21 20:03:12 $">
+
+<p>Route 64 is fully based on the abstractions that are defined in the
+package de.michab.simulator.  The set of interfaces and classes in this package
+lays out a generic definition of the hardware pieces that make up a computer.
+The model that is implemented there assumes that a computer consists of a set 
+of chips that are placed at certain address positions in a common memory.
+Communication between the chips is done through reading and writing shared
+memory cells.  As in a real computer system the synchronisation is based on a 
+clock that coordinates and synchronises all actions in the system.
+</p><p>
+<img src="images/model.gif" name="Model overview."/>
+</p><p>
+In the emulation a computer's memory is represented by an implementation of the
+<code><a href="../javadoc/de/michab/simulator/Memory.html">Memory</a></code>
+interface.  In its simplest form a piece of memory behaves rather straight:  In
+the case of RAM (random access memory) it
+allows to write a value into a certain memory address (also called
+memory cell) and returns the very same value if the address is read again.  No 
+modification of the value is performed, the memory is just a passive 
+information store.  For ROM (read only memory) the story is even simpler: In 
+this case the values that the memory holds are predefined and cannot be 
+modified.
+</p><p>
+Memory layout of the Commodore 64 uses both types of memory and is a bit more 
+complicated since the memroy is not only adressed in a linear way.  A general
+solution to place more memory in the 64k address space that the processor could
+address is called <i>memory banking</i>.  This means to have several memory 
+levels where the level that actually is to be used was selected by an 
+additional register. Since the 64 had 64k of RAM as well as additional ROM
+areas, the technique was used in the Commodore 64.  The register that allowed 
+to define the current memory configuration is part of the processor.
+</p><p>
+<img src="images/bankedMemory.gif" name="Banked memory." border="0"/>
+</p><p>
+ Each of the different chips in the emulation is represented by an 
+ implementation of
+ the <code><a href="../javadoc/de/michab/simulator/Chip.html">Chip</a></code>
+ interface.  Each chip has a set of registers or ports.  These are memory cells
+ that are implemented by a chip and that represent the programmatic interface to
+ control the chip's functionality.  The chip registers can allow read and write
+ operations or only one of these.  For example most of the Commodore 64's video
+ chip registers allow read and write while most of the sound chip registers are
+ write-only.  When a chip is mapped into memory then the normal memory cells are
+ in a certain address range replaced by the chip register.  The first address
+ that is replaced by a chip register is called the <i>base address</i> of a
+ chip.  A consequence is that certain memory addresses represent simple passive
+ memory cells while others actually trigger chip internal functionality.
+<p></p>
+ A special kind of a chip is the processor.  A processor is the driving element
+ in a computer system.  In a loop it reads a register cell, interprets its
+ contents as an instruction and executes the instruction, which potentially
+ leads to memory writes, memory reads, or processor internal register updates.
+ These processor internal registers must not be mixed with the chip registers
+ described above;  the processor registers cannot be addressed (read) from the
+ outside.  Instead the processor registers are used to hold the current status
+ of the computation like the program counter position and intermediate
+ computation values.  The model defines
+ <code><a href="../javadoc/de/michab/simulator/Processor.html">Processor</a></code>
+ as the interface that is used to implement processor functionality.  This 
+ interface
+ allows to plug a debugger to a processor that is then called for each 
+ computation step the processor performs and that can display the processor 
+ status and the current instructions for debug purposes.
+</p>
+</chapter>

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-gg-superpipeline.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter id="r64-gg-superpipeline" modified="$Date: 2004/07/26 20:52:53 $">
+
+<p>Funny idea.</p>
+
+<p>
+  <applet
+    name = 
+      "c64" 
+    code =
+      "de.michab.apps.route64.Commodore64Applet.class"
+    archive =
+      "../jnlp/route64.jar"
+    width =
+      "384"
+    height =
+      "298"
+    alt =
+      "Applet start failed.  Java plugin not installed?">
+      
+    <param name="image" value="images/superpipeline.d64"/>  
+    <param name="start" value="SUPER PIPEL"/>
+    <param name="device" value="1"/>
+  </applet>
+</p>
+
+</chapter>

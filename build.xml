@@ -1,0 +1,268 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: build.xml 11 2008-09-20 11:06:39Z binzm $ -->
+
+<!-- Place comments and descriptions into the description attributes that are
+     available with most of the tags.  This makes this information available
+     to tools and scripts.
+  -->
+
+<project name="route64" default="dist" basedir=".">
+
+  <property
+    description =
+      "Allow properties defined in a file to override the settings here."
+    file="build.properties"/>
+
+  <property
+    description="The sourcecode position."
+    name="in.src"
+    value="${basedir}/src"/>
+
+  <property
+    description="The documentation position."
+    name="in.doc"
+    value="${basedir}/doc"/>
+
+  <property
+    description="The name of a directory used for creating the build."
+    name="out.bin"
+    value="${basedir}/bin"/>
+
+  <property
+    description="The name of a directory used for creating the distributables."
+    name="out.dist"
+    value="${basedir}/dist"/>
+
+  <property
+    description="The name of a directory for the project web site."
+    name="out.web"
+    value="${basedir}/web"/>
+
+  <property
+    description="The WebStart jar file to use."
+    name="webstart"
+    value="javaws.jar"/>
+
+  <property
+    description="The JDK runtime jar to be used for compiling."
+    name="jdkrt"
+    value="rt.jar"/>
+
+  <property
+  	description="Position of common project."
+  	name="common"
+	value="${basedir}/../dev_common"/>
+
+
+  <path description="Defines the project's classpath."
+        id="classpath.id">
+    <!-- Webstart -->
+  	<pathelement location="${java.home}/lib/${webstart}"/>
+    <!-- JDK runtime. TODO is that really cool?? -->
+  	<pathelement location="${jdkrt}"/>
+  </path>
+
+
+
+  <target description="Compiles the sources."
+          name="class"
+          depends="prepare">
+  	<!-- Compile the commons stuff into our binary area. -->
+    <javac srcdir="${common}/src"
+           destdir="${out.bin}"
+           deprecation="true"
+           target="1.5"/>
+    <!-- Compile the project itself into our binary area. -->
+    <javac srcdir="${in.src}"
+    	   excludes="de/michab/utils/tools/**"
+           destdir="${out.bin}"
+           classpathref="classpath.id"
+           deprecation="true"
+           target="1.5"/>
+  </target>
+
+
+
+  <target description="Copies resource files into the build area."
+          name="resource"
+          depends="class">
+    <copy todir="${out.bin}">
+      <fileset dir="${in.src}"
+               excludes="doc/**"
+               includes="**/*.properties,**/*.gif,**/*.ROM"/>
+    </copy>
+  </target>
+
+
+
+  <target name="jdoc" depends="class"
+          description="Generates the javadocs into the web area.">
+    <!-- Create the jdoc directory -->
+    <mkdir dir="${out.web}/javadoc"/>
+    <javadoc packagenames="de.michab.*"
+             sourcepath="${in.src}"
+             destdir="${out.web}/javadoc"
+             classpathref="classpath.id"
+             use="true"/>
+  </target>
+
+
+
+  <target description="Creates the Route 64 core executable jar."
+          name="link" depends="resource">
+    <!-- check 'index' attribue -->
+    <jar
+      jarfile="${out.bin}/${ant.project.name}.jar"
+      basedir="${out.bin}"
+      excludes="${in.src}/doc/**">
+
+      <manifest>
+        <attribute name="Main-Class" value="de.michab.apps.route64.Commodore64"/>
+        <attribute name="Built-By" value="${user.name}"/>
+        <section name="${ant.project.name}">
+        	<attribute
+        		name="Implementation-Title"
+        		value="${ant.project.name}"/>
+        	<attribute
+                name="Implementation-Version"
+                value="$Name:  $ ${DSTAMP}"/>
+        </section>
+      </manifest>
+    </jar>
+  </target>
+
+
+
+  <target
+    description="Create the User's Guide"
+    name="doc-ug"
+    depends="prepare">
+
+    <mkdir dir="${out.web}/usersguide"/>
+
+    <xslt
+      basedir="${in.doc}/usersguide"
+      destdir="${out.web}/usersguide"
+      includes="*.chp *.toc"
+      style="${in.doc}/tools/book.xsl">
+
+      <param name="book.home" expression="../usersguide/index.toc"/>
+    </xslt>
+  </target>
+
+
+
+  <target
+    description="Create the Game Gallery"
+    name="doc-gg"
+    depends="prepare">
+
+    <mkdir dir="${out.web}/gallery"/>
+
+	<xslt
+  		basedir="${in.doc}/gallery"
+  		destdir="${out.web}/gallery"
+  		includes="*.chp *.toc"
+  		style="${in.doc}/tools/book.xsl">
+
+        <param
+          name="book.home"
+          expression="../gallery/index.toc"/>
+    </xslt>
+
+    <copy verbose="true" todir="${out.web}/gallery/images">
+      <fileset dir="${in.doc}/gallery/images"
+               includes="**/*"/>
+    </copy>
+  </target>
+
+
+
+  <target
+    description="Create the Developer's Guide"
+    name="doc-dg"
+    depends="prepare">
+
+    <mkdir dir="${out.web}/devguide"/>
+
+	<xslt
+  		basedir="${in.doc}/devguide"
+  		destdir="${out.web}/devguide"
+  		includes="*.chp *.toc"
+  		style="${in.doc}/tools/book.xsl">
+
+        <param
+          name="book.home"
+          expression="../devguide/index.toc"/>
+    </xslt>
+
+    <copy verbose="true" todir="${out.web}/devguide/images">
+      <fileset dir="${in.doc}/devguide/images"
+               includes="**/*"/>
+    </copy>
+  </target>
+
+
+
+  <target description="Create the web site."
+          name="web"
+          depends="doc-ug,doc-gg,doc-dg,link,jdoc">
+
+	<!-- Our jdoc dependency created the javadoc for the project. -->
+
+	<!-- Copy the static html pages. -->
+    <copy todir="${out.web}">
+      <fileset dir="${in.doc}"
+               includes="**/*.html,**/*.gif,**/*.jpg,**/*.jnlp"/>
+    </copy>
+
+    <!-- Copy the image files to the documentation area.  These images
+         are shared between the different documents. -->
+    <copy todir="${out.web}/resources">
+      <fileset dir="${in.src}/de/michab/apps/route64/resources"
+               includes="**/*.gif"/>
+    </copy>
+
+    <!-- Complete the WebStart download area by copying the jar file.
+         -->
+    <copy verbose="true" todir="${out.web}/jnlp/"
+          file="${out.bin}/${ant.project.name}.jar" />
+  </target>
+
+
+
+  <target description="Generate the full distribution."
+          name="dist"
+  	      depends="link,web">
+  	<!-- Make the executable file. -->
+    <copy tofile="${out.dist}/${ant.project.name}-${DSTAMP}.jar"
+          file="${out.bin}/${ant.project.name}.jar" />
+
+    <!-- Make a zip of the full web site. -->
+    <zip
+      zipfile="${out.dist}/web-${ant.project.name}-${DSTAMP}.zip"
+      basedir="${out.web}">
+    </zip>
+  </target>
+
+
+  <!-- Inverse to target 'clean'. -->
+  <target description="Set up the needed directory structure."
+          name="prepare">
+    <tstamp/>
+    <mkdir dir="${out.dist}"/>
+    <mkdir dir="${out.bin}"/>
+    <mkdir dir="${out.web}"/>
+  </target>
+
+
+
+  <!-- Inverse to target 'prepare'. -->
+  <target description="Remove all files and directories generated by a build."
+          name="clean">
+    <delete dir="${out.dist}"/>
+    <delete dir="${out.bin}"/>
+    <delete dir="${out.web}"/>
+  </target>
+</project>

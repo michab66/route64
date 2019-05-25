@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: index.toc 7 2008-02-07 10:14:35Z binzm $ -->
+
+<toc
+  title="Route 64 User's Guide"
+  id = "r64-ug-toc"
+  target="index.html"
+  version="$Revision: 7 $"
+  modified="$Date: 2004/09/04 19:41:29 $"
+  release="$Name:  $">
+
+  <tocitem 
+    text = "What is Route64?" 
+    id = "r64-whatis"
+    target = "r64-whatis.html"/>
+
+  <tocitem
+    text = "System Requirements"
+    id = "r64-system-requirements"
+    target = "r64-system-requirements.html"/>
+
+  <tocitem 
+    text="Installation and startup" 
+    id = "r64-installation"
+    target="r64-installation.html"/>
+
+  <tocitem 
+    text="Commodore 64 Basics"
+    id = "r64-terminology"
+    target="r64-terminology.html"/>
+
+  <tocitem 
+    text="Loading Software"
+    id = "r64-loading"
+    target="r64-loading.html"/>
+
+  <tocitem 
+    text="Keyboard and Joystick Mapping"
+    id = "r64-keyboard"
+    target="r64-keyboard.html"/>
+
+  <tocitem 
+    text="Actions"
+    id = "r64-actions"
+    target="r64-actions.html"/>
+
+  <tocitem 
+    text="Using the built-in Debugger"
+    id = "r64-debugger"
+    target="r64-debugger.html"/>
+
+  <tocitem 
+    text="Applet Route 64"
+    id = "r64-customizing"
+    target="r64-customizing.html"/>
+
+  <tocitem 
+    text="Links"
+    id = "r64-links"
+    target="r64-links.html"/>
+
+  <tocitem 
+    text="GNU General Public License"
+    id = "r64-license"
+    target="r64-license.html"/>
+
+  <frontpage>
+    <p><img
+    src="images/Route64Xp.gif"
+    name="A blue 64 screen." 
+    border="0"/></p>
+  </frontpage>
+</toc>

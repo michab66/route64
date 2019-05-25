@@ -1,0 +1,117 @@
+
+rel-
+
+Added memory editor for debugging support.  Switched to Jdk1.4.
+
+rel-20050708-route64
+
+Invested more work in timing.  Stuff got simpler and more exact.
+Refactored sound.  Fixed problems with undocumented opcodes in
+processor emulation.
+
+rel-20050227-route64
+
+Completely reworked timing.  The new timing performs a much more
+detailed emulation of the original system.  System load went up with the new
+(nearly) cycle-exact timing, being exact means needing more brain-, eh, 
+processor cycles.  Many timing dependend games behave better now.
+As a side effect we could throw out a lot of now obsolete code that
+had in the past the goal to control system load.  Internally some non-
+intuitive behaviour remains, but this will be resolved over the next releases.
+
+rel-20050117-route64
+
+Fixed relative addressing modes and cycle timing in the processor 
+emulation.  Fixed possibility of deadlock for certain CIA programming
+sequences.
+
+rel-20041211-route64
+
+Reset is now always hard, i.e. also re-initialising the reset-vector.  This
+allows to reset even if a programme modified the reset vector.
+Additional image file format .PRG is now supported.
+
+rel-20040817-route64
+
+Added sound support.  Wow and thanks, Joakime.
+UI Rework: Added new icons, some from Eclipse.org, some newly made.
+Added Games Gallery to documentation.
+
+rel-20040605-route64
+
+Added Applet support: Applet class is de.michab.apps.route64.Commodore64Applet.
+Finally fixed defect 409221.  That took three years!  Now happily  running on
+multiprocessor systems.
+
+rel-20040213-route64
+
+UI changes:
+ Added mack menu components.  Cool menu/toolbar system now.
+ Dropped JDK1.2 support.
+Rework of debugger internals.
+Fixes for 740949:
+ Video screen drawing is now dynamically adapting to available
+ system speed.
+ Processor cycles are kept in realtime sync.
+Addition of feature 722421: Keyboard support now solid, simple and
+straightforward:  The keys just result in the characters that are
+printed on them.
+
+rel-20030610-route64
+
+Fixed sprite size register mapping.  Register numbers were wrong.
+For the next releases we have to concentrate on clockspeed control.
+
+rel-020827-route64
+
+Fixed resize problem.
+Started restructuring towards better clock emulation and activity dispatch.
+This is pretty experimental.
+
+rel-011229-route64
+
+Beefed up and completed the documentation as a web site.  First steps
+towards full WebStart capability.  Many minor cleanups -- in total a
+major cleanup.
+
+rel-011202-route64
+
+Fixed jdk1.4 problems with focus and key handling.  Implemented a
+workaround since the defect on bug parade develops into a pattern
+that makes me believe it will never get fixed.  Focus handling
+seems to break down because of its own complexity.
+
+rel-160901-route64
+
+Fixed reference to jdk1.3 specific classes.  Route64 keeps on jdk1.2.
+Removed javadoc warnings.
+
+rel-020601-route64
+
+Fixed problems in t64 loader.
+Added p00 loader.
+Reworked load dialog filters.
+Reworked screen rasterizing, solved problem with raster polling.
+Added message bar.
+Fixed function key mappings.
+Changed STOP and RESTORE key mappings.
+
+rel-010501-route64
+
+Debugger system is integrated.
+Finally can be deployed in compressed jar file.
+
+rel-010416-route64
+
+.t64 load format is now supported.
+Drag and drop loading of image files.
+New Swing based UI.
+Joystick input restructured.
+System load is reduced while waiting for characters.
+
+rel-010316-route64
+
+Restructured towards a cooler UI in the future.
+Fixed problem with 0x1000 and 0x8000 character mapping -> 
+  Galaga / The Hobbit now work.  Big impact.
+Restructured C64Memory and cleaned up.  No longer redundant loading.

@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-dg-04-core.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter 
+  id="r64-dg-04-core" 
+  modified="$Date: 2005/07/21 20:03:12 $">
+
+<H2>Implementing a debugger</H2>
+<P>A special interface exists that allows for the integration of a
+debugger system. The current system relies on an implementation of
+the <A HREF="javadoc/de/michab/simulator/Processor.html">Processor</A>
+interface that is able to accept an inplementation of the <A HREF="javadoc/de/michab/simulator/Debugger.html">Debugger</A>
+interface. A reference to the emulation's processor is available from
+the <A HREF="javadoc/de/michab/simulator/mos6502/c64/C64Core.html">C64Core</A>
+object. The dynamic behavior of these interfaces is displayed in the
+following sequence diagram:</P>
+<p><img SRC="images/DebuggerSd.gif" NAME="Grafik1" ALIGN="left" WIDTH="738" HEIGHT="739" BORDER="0"/>
+</p>
+<P>There exist three basic scenarios when integrating a debugger.
+<EM>Activation</EM> means what steps need to be taken to add a
+debugger implementation to the running system. <EM>Single stepping</EM>
+means how the system behaves when a debugger instance has been added
+to the system. This should cover all possible interactions needed for
+single stepping, the handling of breakpoints, and other things that a
+Debugger plans to undertake. Removing the debugger from the system is
+meant with <EM>deactivation</EM>.</P>
+<H3>Activation</H3>
+<P>The first scenario &#150; adding a debugger &#150; is quite easy
+to implement. After creating an instance of the debugger it has to be
+registered with the Processor via the setDebugger() operation. This
+leads to a backward call onto the Debugger's setProcessor() call.
+Note that the type of the object that is passed via this call into
+the Debugger is the real Processor implementation which is a
+reference to the fully specialized CPU object. It is recommended that
+the debugger defines an object used for thread locking that is used
+in the later stages for being able to control the CPU thread from the
+user interface without busy waiting.</P>
+
+</chapter>

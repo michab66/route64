@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- $Id: r64-dg-02-overview.chp 7 2008-02-07 10:14:35Z binzm $ -->
+
+<chapter 
+  id="r64-dg-02-overview" 
+  modified="$Date: 2005/07/21 20:03:12 $">
+
+<p>
+Like every Java application the Route 64 implementation is distributed across
+a number of different Java packages.  The main package that holds the core 
+implementation is
+<code><a href="../javadoc/de/michab/simulator/package-summary.html">de.michab.simulator.*</a></code>
+and the packages below.  The 
+classes in these packages contain the core Route 64 implemention without 
+dependencies on other classes.
+</p><p>
+Each of the packages under <code>de.michab.simulator.*</code> has a well 
+defined meaning.  The package <code>de.michab.simulator</code> 
+contains all classes that should be reusable for other types
+of emulations. If one plans to implement an entirely new emulation &#150;
+e.g. a Sinclair Spectrum &#150; then the interfaces and classes in
+this packages should be usable for defining and implementing the new
+system structure.
+</p><p>
+The package <code>de.michab.simulator.mos6502</code> holds chip emulations from
+the <i>MOS 6502</i> hardware family. The chip emulations placed here do not 
+contain any
+system specific functionality to keep these parts reusable when
+emulating different systems based on the 6502 family of chips. When
+implementing a Commodore VC20 emulator this package would house the
+resulting classes and possibly some of the existing classes &#150;
+like the 6502 cpu chip emulation &#150; should be reusable
+unmodified. Note that the package also holds additional classes that are used
+to implement certain chips. An example is the Commodore 64's video
+interface chip: The complexity of this chip's inner workings was
+distributed across a handful of classes that all reside in the
+<code>mos6502</code> package with package local scope &#150; visible and usable
+for the class implementations in that package, but not for classes
+in other packages.
+</p><p>
+Finally the package <code>de.michab.simulator.mos6502.c64</code> is
+	the area where classes are placed that are responsible for
+	implementing a concrete computer system &#150; the Commodore 64. On an
+	abstract level the classes contained in this package are the
+	integrating glue for the classes contained in the mos6502 package.
+	Also missing pieces like keyboard or joystick emulations are placed
+	here. Last but not least the classes in this package implement the
+	integration of the raw (and boring) emulation with the bells and
+	whizzles of an user interface in the form of a JavaBean.
+</p><p>
+The class that represents the Route 64 bean is 
+<code><a href="../javadoc/de/michab/simulator/mos6502/c64/C64Core.html">de.michab.simulator.mos6502.c64.C64Core</a></code>.
+When integrating Route 64 into a different application this bean implementation
+is the point to start, since the bean offers the emulator functionality without
+a concrete user interface and in a very modular manner since the bean only
+depends on classes in its own package hierarchy.</p><p>
+The package <code>de.michab.apps.route64</code> holds different concrete
+Route 64 client implementations based on the bean.  One is the Java application
+that can be downloaded from Sourceforge, the other is Route 64 in the form of
+an applet that is used on the Games Gallery.  Note that all other packages do
+only exist as implementation support for these clients and have no further
+coupling to the emulator core.  As a side-note:  The Route 64 Eclipse plug-in
+also uses the Route 64 bean class. TODO link.
+</p>
+</chapter>
