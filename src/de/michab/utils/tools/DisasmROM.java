@@ -56,25 +56,15 @@ class DisasmROM {
         if (len>1) {
             hexval="  $"+Integer.toHexString(val);
         }
-        if (text!=null) {
-            beg=text.indexOf("%d");
-            if (beg>0) {
-                str1=text.substring(0,beg);
-                if ((beg+2)<text.length()) {
-                    str2=text.substring(beg+2,text.length());
-
-                    retv=str1+hexval+str2;
-                } else {
-                    retv=str1+hexval;
-                }
-            } else {
-                retv=text;
-            }
+        if (text != null) {
+            retv = substitutePlaceHolders(text, hexval);
         }
         return retv;
     }
 
-
+    private static String substitutePlaceHolders(String template, String... values) {
+        return String.format(template.replaceAll("\\{\\d\\}", "%s"), values);
+    }
 
     /**
      *
