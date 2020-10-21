@@ -6,12 +6,19 @@
 
 package de.michab.swingx;
 
-import java.awt.*;
-import java.awt.image.*;
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
-import sun.awt.AppContext;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Image;
+import java.awt.Transparency;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.IndexColorModel;
+
+import javax.swing.Icon;
 
 /**
  * Implements the bumps used throughout the Metal Look and Feel.
@@ -47,20 +54,21 @@ class MetalBumps implements Icon {
 
     private static BumpBuffer createBuffer(GraphicsConfiguration gc,
                                            Color topColor, Color shadowColor, Color backColor) {
-        AppContext context = AppContext.getAppContext();
-        List<BumpBuffer> buffers = (List<BumpBuffer>) context.get(METAL_BUMPS);
-        if (buffers == null) {
-            buffers = new ArrayList<BumpBuffer>();
-            context.put(METAL_BUMPS, buffers);
-        }
-        for (BumpBuffer buffer : buffers) {
-            if (buffer.hasSameConfiguration(gc, topColor, shadowColor, backColor)) {
-                return buffer;
-            }
-        }
-        BumpBuffer buffer = new BumpBuffer(gc, topColor, shadowColor, backColor);
-        buffers.add(buffer);
-        return buffer;
+        throw new InternalError( "Fix sun reference." );
+//        AppContext context = AppContext.getAppContext();
+//        List<BumpBuffer> buffers = (List<BumpBuffer>) context.get(METAL_BUMPS);
+//        if (buffers == null) {
+//            buffers = new ArrayList<BumpBuffer>();
+//            context.put(METAL_BUMPS, buffers);
+//        }
+//        for (BumpBuffer buffer : buffers) {
+//            if (buffer.hasSameConfiguration(gc, topColor, shadowColor, backColor)) {
+//                return buffer;
+//            }
+//        }
+//        BumpBuffer buffer = new BumpBuffer(gc, topColor, shadowColor, backColor);
+//        buffers.add(buffer);
+//        return buffer;
     }
 
     public void setBumpArea( Dimension bumpArea ) {
@@ -83,6 +91,7 @@ class MetalBumps implements Icon {
         }
     }
 
+    @Override
     public void paintIcon( Component c, Graphics g, int x, int y ) {
         GraphicsConfiguration gc = (g instanceof Graphics2D) ?
                 ((Graphics2D) g).getDeviceConfiguration() : null;
@@ -112,10 +121,12 @@ class MetalBumps implements Icon {
         }
     }
 
+    @Override
     public int getIconWidth() {
         return xBumps * 2;
     }
 
+    @Override
     public int getIconHeight() {
         return yBumps * 2;
     }

@@ -47,7 +47,13 @@
   </build>
   
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-base -->
+	<dependency>
+        <groupId>micbinz</groupId>
+        <artifactId>smack</artifactId>
+        <version>69</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/lib/dev_smack-69.jar</systemPath>
+    </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-base</artifactId>
