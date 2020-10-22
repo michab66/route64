@@ -248,7 +248,7 @@ public final class Commodore64
     /* (non-Javadoc)
      * @see de.michab.mack.MackApplication#createMainComponent()
      */
-    protected Component createMainComponent()
+    private Component createMainComponent()
     {
         return _emulator.getDisplay();
     }
