@@ -294,9 +294,11 @@ public final class Monitor
   /**
    *
    */
-  public void actionPerformed( ActionEvent ae )
+  @Override
+public void actionPerformed( ActionEvent ae )
   {
-      _home.show( _frame );
+      throw new InternalError( "TODO" );
+      //_home.show( _frame );
   }
 
 

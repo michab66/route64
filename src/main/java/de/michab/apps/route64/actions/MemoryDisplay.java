@@ -88,7 +88,8 @@ public final class MemoryDisplay
   /*
    * Inherit Javadoc.
    */
-  public void actionPerformed( ActionEvent e )
+  @Override
+public void actionPerformed( ActionEvent e )
   {
     JTable view = new JTable(
         _memoryModel );
@@ -118,7 +119,8 @@ public final class MemoryDisplay
     f.getContentPane().add(
         new JScrollPane( view ), BorderLayout.CENTER);
 
-    _home.show( f );
+    throw new InternalError( "TODO" );
+    //_home.show( f );
   }
 
 
