@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -20,11 +21,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
-import org.jdesktop.smack.MackActionManager;
-import org.jdesktop.smack.actions.MackBooleanPropertyAction;
-
-import de.michab.apps.route64.actions.InputDeviceAction;
-import de.michab.apps.route64.actions.MemoryDisplay;
 import de.michab.apps.route64.actions.Monitor;
 import de.michab.apps.route64.actions.ResetAction;
 import de.michab.simulator.mos6502.Cpu6510;
@@ -72,84 +68,98 @@ public final class Commodore64
      */
     private Commodore64()
     {
-        _mainFrame = new JFrame( getClass().getSimpleName() );
-        _mainFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-        _mainFrame.setPreferredSize( new Dimension( 400,  300 ) );
-        _mainFrame.getContentPane().add( _toolbar, BorderLayout.NORTH );
-    }
-
-
-
-    /**
-     * Creates the application's toolbar.
-     */
-    protected void addActions( MackActionManager am )
-    {
-        // Actually add all the actions...
-        am.addAction(
-                new ResetAction( _emulator ) );
-        am.addAction(
-                new Monitor(
-                        (Cpu6510)_emulator.getCpu(),
-                        this ) );
-
-        am.addAction( _loadComponent );
-        am.addAction(
-                new InputDeviceAction(
-                        "ACT_JOYSTICK_ONE",
-                        _emulator,
-                        C64Core.InputDevice.JOYSTICK_0,
-                        false ) );
-        am.addAction(
-                new InputDeviceAction(
-                        "ACT_JOYSTICK_TWO",
-                        _emulator,
-                        C64Core.InputDevice.JOYSTICK_1,
-                        false ) );
-        am.addAction(
-                new InputDeviceAction(
-                        "ACT_KEYBOARD",
-                        _emulator,
-                        C64Core.InputDevice.KEYBOARD,
-                        true ) );
-        //    am.addAction( new RestoreSizeAction( "ACT_ZOOMBACK", this ) );
-
-        am.addAction(
-                new MackBooleanPropertyAction(
-                        "ACT_SOUND", "soundOn", _emulator, false ) );
-        am.addAction(
-                new MemoryDisplay( _emulator.getMemory(), this ) );
-    }
-
-
-
-    /**
-     *
-     */
-    private SystemFile _imageFile = null;
-
-
-
-    /**
-     * Start the thing -- will this ever fly??
-     */
-    private void initialize( final String[] argv )
-    {
-        //      super.initialize( argv );
-
-        _argv = argv;
-
-        //    Utilities.setSystemLookAndFeel();
-
         // Since our main window holds a heavyweight component, we do not want the
         // menu items to be lightweight, appearing behind the windows content.
         JPopupMenu.setDefaultLightWeightPopupEnabled( false );
         // The same goes with the tool tips.
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled( false );
 
+        _mainFrame = new JFrame( getClass().getSimpleName() );
+        _mainFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        _mainFrame.setPreferredSize( new Dimension( 400,  300 ) );
+        _mainFrame.getContentPane().add( _toolbar, BorderLayout.NORTH );
+    }
+
+    /**
+     * Creates the application's toolbar.
+     */
+    private void addActions( JToolBar am )
+    {
+        am.add(
+                new ResetAction( _emulator ) );
+        am.add(
+                new Monitor(
+                        (Cpu6510)_emulator.getCpu(),
+                        this ) );
+
+        am.add( _loadComponent );
+//        am.add(
+//                new InputDeviceAction(
+//                        "ACT_JOYSTICK_ONE",
+//                        _emulator,
+//                        C64Core.InputDevice.JOYSTICK_0,
+//                        false ) );
+
+        JComboBox<C64Core.InputDevice> combo =
+                new JComboBox<C64Core.InputDevice>(
+                        C64Core.InputDevice.values() );
+        combo.setSelectedIndex( 0 );
+        combo.addActionListener( (e) -> {
+            var selectedIndex = combo.getSelectedIndex();
+            if ( selectedIndex < 0 )
+                return;
+            _emulator.setInputDevice(
+                    combo.getItemAt( selectedIndex ) );
+        });
+        am.add( combo );
+
+//        am.add(
+//                new InputDeviceAction(
+//                        "ACT_JOYSTICK_TWO",
+//                        _emulator,
+//                        C64Core.InputDevice.JOYSTICK_1,
+//                        false ) );
+//
+//        am.add(
+//                new InputDeviceAction(
+//                        "ACT_KEYBOARD",
+//                        _emulator,
+//                        C64Core.InputDevice.KEYBOARD,
+//                        true ) );
+        //    am.addAction( new RestoreSizeAction( "ACT_ZOOMBACK", this ) );
+
+        _emulator.setSoundOn( false );
+//        am.add(
+//                new MackBooleanPropertyAction(
+//                        "ACT_SOUND", "soundOn", _emulator, false ) );
+//        am.add(
+//                new MemoryDisplay( _emulator.getMemory(), this ) );
+    }
+
+    /**
+     * Start the thing -- will this ever fly??
+     */
+    private void initialize( final String[] argv )
+    {
+        _argv = argv;
+        //      setMainFrame( new RoundFrame() );
+        _emulator = new C64Core();
+        //    _emulator.addPropertyChangeListener(
+        //      C64Core.IMAGE_NAME,
+        //      _imageChangeListener );
+
+        addActions( _toolbar );
+//        _loadComponent = new LoadComponent(
+//                _emulator );
+
+        //   super.startup();
+
+        _emulator.start();
+
         if ( argv.length > 0 ) try
         {
-            _imageFile = new SystemFile( new File( argv[0] ) );
+            _emulator.setImageFile(
+                    new SystemFile( new File( argv[0] ) ) );
         }
         catch ( IOException e )
         {
@@ -159,27 +169,6 @@ public final class Commodore64
                             argv[0] +
                     "'" );
             System.exit( 1 );
-        }
-    }
-
-    private void startup()
-    {
-        //      setMainFrame( new RoundFrame() );
-        _emulator = new C64Core();
-        //    _emulator.addPropertyChangeListener(
-        //      C64Core.IMAGE_NAME,
-        //      _imageChangeListener );
-
-//        _loadComponent = new LoadComponent(
-//                _emulator );
-
-        //   super.startup();
-
-        _emulator.start();
-
-        if ( _argv.length > 0 )
-        {
-            _emulator.setImageFile( _imageFile );
         }
 
         if ( _argv.length > 1 )
@@ -198,8 +187,6 @@ public final class Commodore64
         var c64 = new Commodore64();
 
         c64.initialize( argv );
-
-        c64.startup();
     }
 
     /**

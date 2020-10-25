@@ -9,7 +9,7 @@ package de.michab.apps.route64.actions;
 
 import java.awt.event.ActionEvent;
 
-import org.jdesktop.smack.MackAction;
+import javax.swing.AbstractAction;
 
 import de.michab.simulator.mos6502.c64.C64Core;
 
@@ -21,7 +21,7 @@ import de.michab.simulator.mos6502.c64.C64Core;
  * @author Michael Binz
  */
 @SuppressWarnings("serial")
-public class ResetAction extends MackAction
+public class ResetAction extends AbstractAction
 {
     private final C64Core _target;
 
@@ -41,6 +41,7 @@ public class ResetAction extends MackAction
     /**
      * Reset the emulation and set focus back to the emulator display.
      */
+    @Override
     public void actionPerformed( ActionEvent ae )
     {
         _target.reset( true );

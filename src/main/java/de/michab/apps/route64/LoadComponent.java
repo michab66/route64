@@ -13,11 +13,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.JPopupMenu;
 
-import org.jdesktop.smack.MackAction;
-
 import de.michab.simulator.mos6502.c64.C64Core;
-
-
 
 /**
  * Implements a component that allows to load a file from an image file's
@@ -27,7 +23,7 @@ import de.michab.simulator.mos6502.c64.C64Core;
  * @author Michael Binz
  */
 @SuppressWarnings("serial")
-final class LoadComponent extends MackAction
+final class LoadComponent extends AbstractAction
 {
     /**
      * A reference to the emulator.
@@ -81,6 +77,7 @@ final class LoadComponent extends MackAction
      * @param actionEvent
      *            The associated event.
      */
+    @Override
     public void actionPerformed( ActionEvent actionEvent )
     {
         if ( _currentEntries == null )
@@ -104,7 +101,6 @@ final class LoadComponent extends MackAction
             0,
             source.getHeight() );
     }
-
 
     private class PopItem extends AbstractAction
     {
