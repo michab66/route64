@@ -58,32 +58,41 @@ public final class Commodore64
 
 
 
-    private final JFrame _mainFrame;
-
+    private final JFrame _mainFrame =
+            new JFrame( getClass().getSimpleName() );
     private final JToolBar _toolbar =
+            new JToolBar();
+    private final JToolBar _toolbarBottom =
             new JToolBar();
 
     /**
-     * This implements and glues together the GUI for the emulator.
+     * This implements and glues together the UI of the emulator.
      */
     private Commodore64()
     {
         // Since our main window holds a heavyweight component, we do not want the
         // menu items to be lightweight, appearing behind the windows content.
-        JPopupMenu.setDefaultLightWeightPopupEnabled( false );
+        JPopupMenu.setDefaultLightWeightPopupEnabled(
+                false );
         // The same goes with the tool tips.
-        ToolTipManager.sharedInstance().setLightWeightPopupEnabled( false );
-
-        _mainFrame = new JFrame( getClass().getSimpleName() );
-        _mainFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-        _mainFrame.setPreferredSize( new Dimension( 400,  300 ) );
-        _mainFrame.getContentPane().add( _toolbar, BorderLayout.NORTH );
+        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(
+                false );
+        _mainFrame.setDefaultCloseOperation(
+                JFrame.EXIT_ON_CLOSE );
+        _mainFrame.setPreferredSize(
+                new Dimension( 400,  300 ) );
+        _mainFrame.getContentPane().add(
+                _toolbar,
+                BorderLayout.NORTH );
+        _mainFrame.getContentPane().add(
+                _toolbarBottom,
+                BorderLayout.SOUTH );
     }
 
     /**
-     * Creates the application's toolbar.
+     * Populate the application's toolbars.
      */
-    private void addActions( JToolBar am )
+    private void addActions( JToolBar am, JToolBar bottom )
     {
         am.add(
                 new ResetAction( _emulator ) );
@@ -92,13 +101,7 @@ public final class Commodore64
                         (Cpu6510)_emulator.getCpu(),
                         this ) );
 
-        am.add( _loadComponent );
-//        am.add(
-//                new InputDeviceAction(
-//                        "ACT_JOYSTICK_ONE",
-//                        _emulator,
-//                        C64Core.InputDevice.JOYSTICK_0,
-//                        false ) );
+        bottom.add( new LoadComponent( _emulator ) );
 
         JComboBox<C64Core.InputDevice> combo =
                 new JComboBox<C64Core.InputDevice>(
@@ -113,27 +116,7 @@ public final class Commodore64
         });
         am.add( combo );
 
-//        am.add(
-//                new InputDeviceAction(
-//                        "ACT_JOYSTICK_TWO",
-//                        _emulator,
-//                        C64Core.InputDevice.JOYSTICK_1,
-//                        false ) );
-//
-//        am.add(
-//                new InputDeviceAction(
-//                        "ACT_KEYBOARD",
-//                        _emulator,
-//                        C64Core.InputDevice.KEYBOARD,
-//                        true ) );
-        //    am.addAction( new RestoreSizeAction( "ACT_ZOOMBACK", this ) );
-
         _emulator.setSoundOn( false );
-//        am.add(
-//                new MackBooleanPropertyAction(
-//                        "ACT_SOUND", "soundOn", _emulator, false ) );
-//        am.add(
-//                new MemoryDisplay( _emulator.getMemory(), this ) );
     }
 
     /**
@@ -148,12 +131,7 @@ public final class Commodore64
         //      C64Core.IMAGE_NAME,
         //      _imageChangeListener );
 
-        addActions( _toolbar );
-//        _loadComponent = new LoadComponent(
-//                _emulator );
-
-        //   super.startup();
-
+        addActions( _toolbar, _toolbarBottom );
         _emulator.start();
 
         if ( argv.length > 0 ) try
@@ -239,8 +217,6 @@ public final class Commodore64
     {
         return _emulator.getDisplay();
     }
-
-
 
     //    /* (non-Javadoc)
     //     * @see de.michab.mack.MackApplication#load(FT[])

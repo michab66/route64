@@ -10,8 +10,9 @@ package de.michab.apps.route64.actions;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
+
 import org.jdesktop.application.SingleFrameApplication;
-import org.jdesktop.smack.MackAction;
 
 
 /**
@@ -20,7 +21,7 @@ import org.jdesktop.smack.MackAction;
  * @author Michael Binz
  */
 @SuppressWarnings("serial")
-public class RestoreSizeAction extends MackAction
+public class RestoreSizeAction extends AbstractAction
 {
     private SingleFrameApplication _application;
 
