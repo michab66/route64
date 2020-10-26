@@ -11,8 +11,7 @@ package de.michab.apps.route64.actions;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-
-import org.jdesktop.application.SingleFrameApplication;
+import javax.swing.JFrame;
 
 
 /**
@@ -23,12 +22,12 @@ import org.jdesktop.application.SingleFrameApplication;
 @SuppressWarnings("serial")
 public class RestoreSizeAction extends AbstractAction
 {
-    private SingleFrameApplication _application;
+    private JFrame _application;
 
     /**
      * @param key
      */
-    public RestoreSizeAction( String key, SingleFrameApplication app )
+    public RestoreSizeAction( String key, JFrame app )
     {
         super( key );
 
@@ -41,6 +40,6 @@ public class RestoreSizeAction extends AbstractAction
     @Override
     public void actionPerformed( ActionEvent e )
     {
-        _application.getMainFrame().pack();
+        _application.pack();
     }
 }
