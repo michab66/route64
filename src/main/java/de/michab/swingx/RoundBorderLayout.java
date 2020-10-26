@@ -17,7 +17,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.EnumMap;
 
-import org.jdesktop.smack.util.MathExt;
+import org.smack.util.MathUtil;
+
 
 
 
@@ -114,12 +115,12 @@ public class RoundBorderLayout implements LayoutManager2
                 getPreferredSizes();
 
             int centerHeight =
-                MathExt.max(
+                MathUtil.max(
                         psizes.get( Position.WEST ).height,
                         psizes.get( Position.CENTER ).height,
                         psizes.get( Position.EAST ).height );
             int centerWidth =
-                MathExt.max(
+                MathUtil.max(
                         psizes.get( Position.NORTH ).width,
                         psizes.get( Position.CENTER ).width,
                         psizes.get( Position.SOUTH ).width );
@@ -163,33 +164,33 @@ public class RoundBorderLayout implements LayoutManager2
             // Compute max distance from center to the
             // rectangle corners.
             int maxRadius =
-                MathExt.max(
+                MathUtil.max(
                     // North
-                    MathExt.distance(
+                    MathUtil.distanceInt(
                             _center,
                             new Point( vRect.x, 0 ) ),
-                    MathExt.distance(
+                    MathUtil.distanceInt(
                             _center,
                             new Point( vRect.x + vRect.width, 0 ) ),
                     // East
-                    MathExt.distance(
+                    MathUtil.distanceInt(
                             _center,
                             new Point( hRect.width, hRect.y ) ),
-                    MathExt.distance(
+                    MathUtil.distanceInt(
                             _center,
                             new Point( hRect.width, hRect.y + hRect.height ) ),
                     // South
-                    MathExt.distance(
+                    MathUtil.distanceInt(
                             _center,
                             new Point( vRect.x + vRect.width, vRect.height ) ),
-                    MathExt.distance(
+                    MathUtil.distanceInt(
                             _center,
                             new Point( vRect.x, vRect.height ) ),
                     // East
-                    MathExt.distance(
+                    MathUtil.distanceInt(
                             _center,
                             new Point( 0, hRect.x + hRect.height ) ),
-                    MathExt.distance(
+                    MathUtil.distanceInt(
                             _center,
                             new Point( 0, hRect.x ) )
                 );
@@ -205,7 +206,7 @@ public class RoundBorderLayout implements LayoutManager2
     private int pythagoras( int hypotenuse, int a )
     {
         if ( hypotenuse > a )
-            return MathExt.pythagoras(
+            return MathUtil.pythagoras(
                     hypotenuse,
                     a );
 
@@ -226,12 +227,12 @@ public final void layoutContainer( Container target )
                getPreferredSizes();
 
            int centerHeight =
-               MathExt.max(
+               MathUtil.max(
                        psizes.get( Position.WEST ).height,
                        psizes.get( Position.CENTER ).height,
                        psizes.get( Position.EAST ).height );
            int centerWidth =
-               MathExt.max(
+               MathUtil.max(
                        psizes.get( Position.NORTH ).width,
                        psizes.get( Position.CENTER ).width,
                        psizes.get( Position.SOUTH ).width );
