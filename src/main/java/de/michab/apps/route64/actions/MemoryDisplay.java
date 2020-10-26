@@ -13,6 +13,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -22,8 +23,6 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
-
-import org.jdesktop.smack.MackAction;
 
 import de.michab.apps.route64.Commodore64;
 import de.michab.simulator.Memory;
@@ -38,7 +37,7 @@ import de.michab.simulator.Memory;
 @SuppressWarnings("serial")
 public final class MemoryDisplay
   extends
-    MackAction
+    AbstractAction
 {
   /**
    * The home application.
@@ -88,7 +87,8 @@ public final class MemoryDisplay
   /*
    * Inherit Javadoc.
    */
-  public void actionPerformed( ActionEvent e )
+  @Override
+public void actionPerformed( ActionEvent e )
   {
     JTable view = new JTable(
         _memoryModel );
@@ -118,7 +118,8 @@ public final class MemoryDisplay
     f.getContentPane().add(
         new JScrollPane( view ), BorderLayout.CENTER);
 
-    _home.show( f );
+    throw new InternalError( "TODO" );
+    //_home.show( f );
   }
 
 

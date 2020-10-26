@@ -7,14 +7,12 @@
  */
 package de.michab.swingx;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
@@ -25,10 +23,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 
-import org.jdesktop.smack.util.MathExt;
-import org.jdesktop.smack.util.StringUtils;
-import org.jdesktop.swingx.JXPanel;
-import org.jdesktop.swingx.painter.ImagePainter;
+import org.smack.util.MathUtil;
+import org.smack.util.StringUtil;
+
 
 
 
@@ -53,7 +50,7 @@ public class RoundFrame extends JFrame
      */
     public RoundFrame()
     {
-        this( StringUtils.EMPTY_STRING );
+        this( StringUtil.EMPTY_STRING );
     }
 
 
@@ -65,39 +62,39 @@ public class RoundFrame extends JFrame
     {
         super( title );
 
-        JXPanel contentPane = new JXPanel();
-
-        BufferedImage bi =
-                iconToImage( new MetalBumps( 20, 20, Color.GRAY, Color.BLUE, Color.DARK_GRAY ) );
-
-        ImagePainter ip = new ImagePainter( bi );
-        ip.setHorizontalRepeat( true );
-        ip.setVerticalRepeat( true );
-        contentPane.setBackgroundPainter( ip );
-        setContentPane( contentPane );
-
-        // Compute the bounds for the maximized window state.
-        Dimension screenSize =
-            Toolkit.getDefaultToolkit().getScreenSize();
-        int minDimension =
-            Math.min( screenSize.width, screenSize.height );
-        setMaximizedBounds( new Rectangle(
-                0,
-                0,
-                minDimension,
-                minDimension ) );
-
-        // The mouse listeners care for move and resize.
-        addMouseListener( _mouseListener );
-        addMouseMotionListener( _mouseListener );
-        // The window state listener handles maximize events.
-        addWindowStateListener( _windowStateListener );
-
-        setUndecorated( true );
-
-        setLayout( new RoundBorderLayout() );
-
-        setLocationRelativeTo( null );
+//        JXPanel contentPane = new JXPanel();
+//
+//        BufferedImage bi =
+//                iconToImage( new MetalBumps( 20, 20, Color.GRAY, Color.BLUE, Color.DARK_GRAY ) );
+//
+//        ImagePainter ip = new ImagePainter( bi );
+//        ip.setHorizontalRepeat( true );
+//        ip.setVerticalRepeat( true );
+//        contentPane.setBackgroundPainter( ip );
+//        setContentPane( contentPane );
+//
+//        // Compute the bounds for the maximized window state.
+//        Dimension screenSize =
+//            Toolkit.getDefaultToolkit().getScreenSize();
+//        int minDimension =
+//            Math.min( screenSize.width, screenSize.height );
+//        setMaximizedBounds( new Rectangle(
+//                0,
+//                0,
+//                minDimension,
+//                minDimension ) );
+//
+//        // The mouse listeners care for move and resize.
+//        addMouseListener( _mouseListener );
+//        addMouseMotionListener( _mouseListener );
+//        // The window state listener handles maximize events.
+//        addWindowStateListener( _windowStateListener );
+//
+//        setUndecorated( true );
+//
+//        setLayout( new RoundBorderLayout() );
+//
+//        setLocationRelativeTo( null );
     }
 
 
@@ -297,7 +294,7 @@ public class RoundFrame extends JFrame
         {
             int radius = getRadius();
 
-            int distance = MathExt.distance(
+            int distance = MathUtil.distanceInt(
                     radius,
                     radius,
                     e.getX(),
@@ -318,7 +315,7 @@ public class RoundFrame extends JFrame
         {
             int radius = getRadius();
 
-            int distance = MathExt.distance(
+            int distance = MathUtil.distanceInt(
                 radius,
                 radius,
                 e.getX(),
@@ -350,7 +347,7 @@ public class RoundFrame extends JFrame
         {
             int radius = getRadius();
 
-            int newradius = MathExt.distance(
+            int newradius = MathUtil.distanceInt(
                     radius,
                     radius,
                     e.getX(),
@@ -451,7 +448,7 @@ public class RoundFrame extends JFrame
 
             int quadrant;
             float kat;
-            float hyp = MathExt.distance(
+            float hyp = MathUtil.distanceInt(
                 0,
                 0,
                 px,
@@ -460,7 +457,7 @@ public class RoundFrame extends JFrame
             if ( px >= 0 && py >= 0 )
             {
                 quadrant = 0;
-                kat = MathExt.distance(
+                kat = MathUtil.distanceInt(
                     0,
                     0,
                     px,
@@ -469,7 +466,7 @@ public class RoundFrame extends JFrame
             else if ( px >= 0 && py < 0)
             {
                 quadrant = 1;
-                kat = MathExt.distance(
+                kat = MathUtil.distanceInt(
                     0,
                     0,
                     0,
@@ -478,7 +475,7 @@ public class RoundFrame extends JFrame
             else if ( px < 0 && py < 0)
             {
                 quadrant = 2;
-                kat = MathExt.distance(
+                kat = MathUtil.distanceInt(
                     0,
                     0,
                     px,
@@ -487,7 +484,7 @@ public class RoundFrame extends JFrame
             else
             {
                 quadrant = 3;
-                kat = MathExt.distance(
+                kat = MathUtil.distanceInt(
                     0,
                     0,
                     0,

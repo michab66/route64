@@ -37,8 +37,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
-import org.jdesktop.smack.MackAction;
-
 import de.michab.apps.route64.Commodore64;
 import de.michab.simulator.Debugger;
 import de.michab.simulator.Processor;
@@ -57,7 +55,7 @@ import de.michab.simulator.mos6502.Cpu6510;
  */
 public final class Monitor
   extends
-    MackAction
+    AbstractAction
   implements
     Debugger
 {
@@ -294,9 +292,11 @@ public final class Monitor
   /**
    *
    */
-  public void actionPerformed( ActionEvent ae )
+  @Override
+public void actionPerformed( ActionEvent ae )
   {
-      _home.show( _frame );
+      throw new InternalError( "TODO" );
+      //_home.show( _frame );
   }
 
 
