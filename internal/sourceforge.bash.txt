@@ -1,2 +1,0 @@
-export CVS_RSH=ssh
-export CVSROOT=:ext:michab66@cvs.route64.sourceforge.net:/cvsroot/route64 
