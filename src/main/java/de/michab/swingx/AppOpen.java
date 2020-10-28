@@ -7,6 +7,7 @@
  */
 package de.michab.swingx;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -18,10 +19,11 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
@@ -37,20 +39,12 @@ import org.smack.util.FileUtil;
  * @version $Rev: 48 $
  * @author Michael Binz
  */
-public class AppOpen <FT>
+class AppOpen
     implements
         DropTargetListener
 {
-    private static final long serialVersionUID =
-            -7923176272415547062L;
-
     private static final Logger LOG =
             Logger.getLogger( AppOpen.class.getName() );
-
-    /**
-     * The file chooser used for selecting the files to open.
-     */
-    private JFileChooser _fc;
 
     /**
      * The used file filter.
@@ -69,44 +63,24 @@ public class AppOpen <FT>
      */
     //private Transformer<FT,File> _transformer;
 
-//    /**
-//     * A reference to the document class.
-//     */
-    private final Class<FT> _documentClass;
 
-
+    private final Consumer<File> _consumer;
 
     /**
      * Create an instance.
      */
-    public AppOpen( JFrame host, Class<FT> documentClass )
+    public AppOpen(
+            Component host,
+            Consumer<File> consumer )
     {
-        //        super( AppActionKey.appOpen );
+        _consumer = Objects.requireNonNull(
+                consumer );
 
-        _documentClass = documentClass;
-
-        //        _transformer = new Transformer<FT, File>( documentClass, File.class );
-
-        host.setEnabled( true );
+        host.setEnabled(
+                true );
         host.setDropTarget( new DropTarget(
                 host,
                 this ) );
-    }
-
-    /**
-     * The public mack api that allows to load files.  Encapsulates
-     * transforming these files to FTs.
-     *
-     * @param files The files to load.
-     */
-    private void load( File[] files )
-    {
-        LOG.info( "count=" + files.length );
-        for ( int i = 0 ; i < files.length ; i++ )
-        {
-            var c = files[i];
-            LOG.info( i + " " + c );
-        }
     }
 
     @Override
@@ -156,7 +130,7 @@ public class AppOpen <FT>
 
                 if ( files.length > 0)
                 {
-                    load( files );
+                    _consumer.accept( files[0] );
                 }
 
                 // Everything went fine.
@@ -178,8 +152,6 @@ public class AppOpen <FT>
             dtde.dropComplete( status );
         }
     }
-
-
 
     /**
      *
@@ -237,6 +209,26 @@ public class AppOpen <FT>
         return true;
     }
 
+    /**
+     * The public mack api that allows to load files.  Encapsulates
+     * transforming these files to FTs.
+     *
+     * @param files The files to load.
+     */
+    private static void cload( File[] files )
+    {
+        LOG.info( "count=" + files.length );
+        for ( int i = 0 ; i < files.length ; i++ )
+        {
+            var c = files[i];
+            LOG.info( i + " " + c );
+        }
+    }
+    private static void cload( File file )
+    {
+        LOG.info( "load=" + file );
+    }
+
     public static void main( String[] args )
     {
         SwingUtilities.invokeLater( () -> {
@@ -244,8 +236,7 @@ public class AppOpen <FT>
             frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
             frame.setSize( new Dimension( 300, 200 ) );
 
-            var x =
-                    new AppOpen<File>( frame, File.class );
+            new AppOpen( frame, AppOpen::cload );
 
             frame.setVisible( true );
         } );
