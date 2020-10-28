@@ -73,6 +73,7 @@ class AppOpen
             Component host,
             Consumer<File> consumer )
     {
+        LOG.setLevel( Level.WARNING );
         _consumer = Objects.requireNonNull(
                 consumer );
 
@@ -226,7 +227,7 @@ class AppOpen
     }
     private static void cload( File file )
     {
-        LOG.info( "load=" + file );
+        LOG.warning( "load=" + file );
     }
 
     public static void main( String[] args )
