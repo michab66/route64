@@ -90,10 +90,13 @@ class AppOpen
 
         LOG.info( "Enter: " + isDropAcceptable( dtde ) );
 
-        if ( isDropAcceptable( dtde ) )
-            dtde.acceptDrag( DnDConstants.ACTION_COPY_OR_MOVE );
-        else
-            dtde.rejectDrag();
+        File[] files = getTransferFiles( dtde.getTransferable() );
+        cload( files );
+
+//        if ( isDropAcceptable( dtde ) )
+//            dtde.acceptDrag( DnDConstants.ACTION_COPY_OR_MOVE );
+//        else
+//            dtde.rejectDrag();
     }
 
     @Override
@@ -218,11 +221,11 @@ class AppOpen
      */
     private static void cload( File[] files )
     {
-        LOG.info( "count=" + files.length );
+        LOG.warning( "count=" + files.length );
         for ( int i = 0 ; i < files.length ; i++ )
         {
             var c = files[i];
-            LOG.info( i + " " + c );
+            LOG.warning( i + " " + c );
         }
     }
     private static void cload( File file )
