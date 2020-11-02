@@ -9,7 +9,6 @@ package de.michab.apps.route64;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 
@@ -70,6 +69,9 @@ public final class Commodore64
      */
     private Commodore64()
     {
+        _toolbar.setFloatable( false );
+        _toolbarBottom.setFloatable( false );
+
         // Since our main window holds a heavyweight component, we do not want the
         // menu items to be lightweight, appearing behind the windows content.
         JPopupMenu.setDefaultLightWeightPopupEnabled(
@@ -79,8 +81,6 @@ public final class Commodore64
                 false );
         _mainFrame.setDefaultCloseOperation(
                 JFrame.EXIT_ON_CLOSE );
-        _mainFrame.setPreferredSize(
-                new Dimension( 400,  300 ) );
         _mainFrame.getContentPane().add(
                 _toolbar,
                 BorderLayout.NORTH );
