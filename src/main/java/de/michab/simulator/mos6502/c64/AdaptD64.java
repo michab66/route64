@@ -9,6 +9,7 @@
  */
 package de.michab.simulator.mos6502.c64;
 
+import java.io.File;
 import java.util.Vector;
 
 
@@ -66,14 +67,15 @@ final class AdaptD64
    *
    * @see ImageFileFactory#isValid
    */
-  public boolean isValid( SystemFile f )
+  @Override
+public boolean isValid( File f )
   {
     return
       // We perform the default validity tests...
       super.isValid( f ) &&
       // ...and check if the filesize is the one that is defined for files of
       // type D64.
-      (f.getLength() == MAGIC_D64_FILESIZE);
+      (f.length() == MAGIC_D64_FILESIZE);
   }
 
 
@@ -81,7 +83,8 @@ final class AdaptD64
   /*
    * Inherit javadoc.
    */
-  public byte[][] getDirectory( byte[] image )
+  @Override
+public byte[][] getDirectory( byte[] image )
   {
     byte[][] result = createDirectory( image );
     return result;
@@ -92,7 +95,8 @@ final class AdaptD64
   /*
    * Inherit javadoc.
    */
-  public byte[] loadEntry( byte[] name, byte[] image )
+  @Override
+public byte[] loadEntry( byte[] name, byte[] image )
   {
     int dirOffset = findDirEntryFor( name, image );
     if ( dirOffset == -1 )
