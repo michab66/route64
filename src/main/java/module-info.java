@@ -8,6 +8,9 @@ module route64
     exports de.michab.apps.route64.actions;
     exports de.michab.simulator.mos6502.c64;
 
+    // Open for resource loading.
+    opens de.michab.simulator.mos6502.c64.roms;
+
     requires framework.smack;
 
     requires java.desktop;

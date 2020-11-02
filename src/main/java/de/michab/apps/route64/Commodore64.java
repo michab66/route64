@@ -9,7 +9,6 @@ package de.michab.apps.route64;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 
@@ -40,9 +39,8 @@ public final class Commodore64
     /**
      * The actual emulator instance tied to this UI.
      */
-    private C64Core _emulator;
-
-
+    private final C64Core _emulator =
+            new C64Core();
 
     /**
      * The original command line arguments.
@@ -54,9 +52,8 @@ public final class Commodore64
     /**
      * The quick-load component on the toolbar.
      */
-    private LoadComponent _loadComponent;
-
-
+    private LoadComponent _loadComponent =
+            new LoadComponent( _emulator );
 
     private final JFrame _mainFrame =
             new JFrame( getClass().getSimpleName() );
@@ -70,6 +67,9 @@ public final class Commodore64
      */
     private Commodore64()
     {
+        _toolbar.setFloatable( false );
+        _toolbarBottom.setFloatable( false );
+
         // Since our main window holds a heavyweight component, we do not want the
         // menu items to be lightweight, appearing behind the windows content.
         JPopupMenu.setDefaultLightWeightPopupEnabled(
@@ -79,8 +79,6 @@ public final class Commodore64
                 false );
         _mainFrame.setDefaultCloseOperation(
                 JFrame.EXIT_ON_CLOSE );
-        _mainFrame.setPreferredSize(
-                new Dimension( 400,  300 ) );
         _mainFrame.getContentPane().add(
                 _toolbar,
                 BorderLayout.NORTH );
@@ -101,7 +99,7 @@ public final class Commodore64
                         (Cpu6510)_emulator.getCpu(),
                         this ) );
 
-        bottom.add( new LoadComponent( _emulator ) );
+        bottom.add( _loadComponent );
 
         JComboBox<C64Core.InputDevice> combo =
                 new JComboBox<C64Core.InputDevice>(
@@ -119,6 +117,34 @@ public final class Commodore64
         _emulator.setSoundOn( false );
     }
 
+    private void load( File f )
+    {
+        try
+        {
+            _emulator.setImageFile(
+                    new SystemFile( f ) );
+            var dir = _emulator.getImageFileDirectory();
+            _loadComponent.setDirectoryEntries( dir );
+        }
+        catch ( Exception e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    private boolean filterFile( File f )
+    {
+        if ( f.isDirectory() )
+            return true;
+        if ( f.getPath().endsWith( ".d64" ) )
+            return false;
+        if ( f.getPath().endsWith( ".t64" ) )
+            return false;
+        if ( f.getPath().endsWith( ".p00" ) )
+            return false;
+        return true;
+    }
+
     /**
      * Start the thing -- will this ever fly??
      */
@@ -126,7 +152,6 @@ public final class Commodore64
     {
         _argv = argv;
         //      setMainFrame( new RoundFrame() );
-        _emulator = new C64Core();
         //    _emulator.addPropertyChangeListener(
         //      C64Core.IMAGE_NAME,
         //      _imageChangeListener );
@@ -155,6 +180,12 @@ public final class Commodore64
         _mainFrame.getContentPane().add(
                 createMainComponent(),
                 BorderLayout.CENTER );
+
+        // Add drag and drop loading.
+        new DropHandler(
+                _mainFrame,
+                f -> load( f ) )
+            .setFilter( this::filterFile );
 
         _mainFrame.pack();
         _mainFrame.setVisible( true );
