@@ -119,6 +119,31 @@ public final class Commodore64
         _emulator.setSoundOn( false );
     }
 
+    private SystemFile convert( File f )
+    {
+        try
+        {
+            return new SystemFile( f );
+        }
+        catch ( Exception e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    private boolean filterFile( File f )
+    {
+        if ( f.isDirectory() )
+            return true;
+        if ( f.getPath().endsWith( ".d64" ) )
+            return false;
+        if ( f.getPath().endsWith( ".t64" ) )
+            return false;
+        if ( f.getPath().endsWith( ".p00" ) )
+            return false;
+        return true;
+    }
+
     /**
      * Start the thing -- will this ever fly??
      */
@@ -155,6 +180,12 @@ public final class Commodore64
         _mainFrame.getContentPane().add(
                 createMainComponent(),
                 BorderLayout.CENTER );
+
+        // Add drag and drop loading.
+        new DropHandler(
+                _mainFrame,
+                f -> _emulator.setImageFile( convert( f ) ) )
+            .setFilter( this::filterFile );
 
         _mainFrame.pack();
         _mainFrame.setVisible( true );

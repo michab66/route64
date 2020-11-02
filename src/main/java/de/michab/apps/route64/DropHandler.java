@@ -6,7 +6,6 @@
 package de.michab.apps.route64;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
@@ -23,9 +22,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 import org.jdesktop.util.PlatformType;
 
@@ -173,31 +169,31 @@ class DropHandler
         return true;
     }
 
-    private static void cload( File file )
-    {
-        LOG.warning( "load=" + file );
-    }
-
-    private static boolean filterPredicate( File f )
-    {
-        if ( f.isDirectory() )
-            return true;
-        if ( f.getPath().endsWith( ".txt" ) )
-            return false;
-        return true;
-    }
-
-    public static void main( String[] args )
-    {
-        SwingUtilities.invokeLater( () -> {
-            var frame = new JFrame( "Drop test." );
-            frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-            frame.setSize( new Dimension( 300, 200 ) );
-
-            new DropHandler( frame, DropHandler::cload ).
-                setFilter( DropHandler::filterPredicate );
-
-            frame.setVisible( true );
-        } );
-    }
+//    private static void cload( File file )
+//    {
+//        LOG.warning( "load=" + file );
+//    }
+//
+//    private static boolean filterPredicate( File f )
+//    {
+//        if ( f.isDirectory() )
+//            return true;
+//        if ( f.getPath().endsWith( ".txt" ) )
+//            return false;
+//        return true;
+//    }
+//
+//    public static void main( String[] args )
+//    {
+//        SwingUtilities.invokeLater( () -> {
+//            var frame = new JFrame( "Drop test." );
+//            frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+//            frame.setSize( new Dimension( 300, 200 ) );
+//
+//            new DropHandler( frame, DropHandler::cload ).
+//                setFilter( DropHandler::filterPredicate );
+//
+//            frame.setVisible( true );
+//        } );
+//    }
 }
