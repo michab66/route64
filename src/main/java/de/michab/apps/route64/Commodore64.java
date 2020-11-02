@@ -39,9 +39,8 @@ public final class Commodore64
     /**
      * The actual emulator instance tied to this UI.
      */
-    private C64Core _emulator;
-
-
+    private final C64Core _emulator =
+            new C64Core();
 
     /**
      * The original command line arguments.
@@ -53,9 +52,8 @@ public final class Commodore64
     /**
      * The quick-load component on the toolbar.
      */
-    private LoadComponent _loadComponent;
-
-
+    private LoadComponent _loadComponent =
+            new LoadComponent( _emulator );
 
     private final JFrame _mainFrame =
             new JFrame( getClass().getSimpleName() );
@@ -101,7 +99,7 @@ public final class Commodore64
                         (Cpu6510)_emulator.getCpu(),
                         this ) );
 
-        bottom.add( new LoadComponent( _emulator ) );
+        bottom.add( _loadComponent );
 
         JComboBox<C64Core.InputDevice> combo =
                 new JComboBox<C64Core.InputDevice>(
@@ -119,11 +117,14 @@ public final class Commodore64
         _emulator.setSoundOn( false );
     }
 
-    private SystemFile convert( File f )
+    private void load( File f )
     {
         try
         {
-            return new SystemFile( f );
+            _emulator.setImageFile(
+                    new SystemFile( f ) );
+            var dir = _emulator.getImageFileDirectory();
+            _loadComponent.setDirectoryEntries( dir );
         }
         catch ( Exception e )
         {
@@ -151,7 +152,6 @@ public final class Commodore64
     {
         _argv = argv;
         //      setMainFrame( new RoundFrame() );
-        _emulator = new C64Core();
         //    _emulator.addPropertyChangeListener(
         //      C64Core.IMAGE_NAME,
         //      _imageChangeListener );
@@ -184,7 +184,7 @@ public final class Commodore64
         // Add drag and drop loading.
         new DropHandler(
                 _mainFrame,
-                f -> _emulator.setImageFile( convert( f ) ) )
+                f -> load( f ) )
             .setFilter( this::filterFile );
 
         _mainFrame.pack();
