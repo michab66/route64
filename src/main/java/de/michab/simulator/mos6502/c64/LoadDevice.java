@@ -7,8 +7,12 @@
  */
 package de.michab.simulator.mos6502.c64;
 
-import de.michab.simulator.*;
-import de.michab.simulator.mos6502.*;
+import java.io.File;
+import java.io.IOException;
+
+import de.michab.simulator.Memory;
+import de.michab.simulator.mos6502.Cpu6510;
+import de.michab.simulator.mos6502.Extension;
 
 
 
@@ -64,7 +68,7 @@ class LoadDevice
   /**
    * The name of the currently loaded image file.
    */
-  private SystemFile _file = null;
+  private File _file = null;
 
 
 
@@ -99,7 +103,8 @@ class LoadDevice
   /*
    * @see Extension#getBaseAddress
    */
-  public int getBaseAddress()
+  @Override
+public int getBaseAddress()
   {
     return LOAD_VECTOR;
   }
@@ -109,7 +114,8 @@ class LoadDevice
   /**
    * The main entry point of this extension.
    */
-  public void extensionCalled( Memory m )
+  @Override
+public void extensionCalled( Memory m )
   {
     int secondaryAddress = getSecondaryAddress( m );
 
@@ -173,7 +179,7 @@ class LoadDevice
    * @return A factory that can handle the passed file.  If no factory is found
    *         <code>null</code> is returned.
    */
-  private ImageFileFactory findFactoryFor( SystemFile f )
+  private ImageFileFactory findFactoryFor( File f )
   {
     for ( int i = 0 ; i < _factories.length ; i++ )
     {
@@ -188,7 +194,7 @@ class LoadDevice
   /**
    * Check if the passed file can be loaded.
    */
-  boolean isValid( SystemFile f )
+  boolean isValid( File f )
   {
     // See if we can find a factory for loading.
     return null != findFactoryFor( f );
@@ -201,22 +207,15 @@ class LoadDevice
    * from.  Note that this has nothing to do with the file name that is given
    * on the 64's command line.
    */
-  boolean setFile( SystemFile f )
+  void setFile( File f )
+      throws IOException
   {
-    ImageFile newImageFile = null;
     ImageFileFactory factory = findFactoryFor( f );
 
-    if ( factory != null )
-      newImageFile = factory.create( f );
+    if ( factory == null )
+        throw new IOException( "Type not supported." );
 
-    boolean loadSuccess = newImageFile != null;
-
-    if ( loadSuccess )
-      _imageFile = newImageFile;
-    else
-      System.err.println( "Load failed: " + f );
-
-    return loadSuccess;
+    _imageFile = factory.create( f );
   }
 
 
@@ -262,7 +261,7 @@ class LoadDevice
    * @return The currently attached image file or <code>null</code> if no image
    *         file is attached.
    */
-  SystemFile getFile()
+  File getFile()
   {
     return _file;
   }

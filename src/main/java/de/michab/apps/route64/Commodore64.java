@@ -24,7 +24,6 @@ import de.michab.apps.route64.actions.Monitor;
 import de.michab.apps.route64.actions.ResetAction;
 import de.michab.simulator.mos6502.Cpu6510;
 import de.michab.simulator.mos6502.c64.C64Core;
-import de.michab.simulator.mos6502.c64.SystemFile;
 
 
 
@@ -121,8 +120,7 @@ public final class Commodore64
     {
         try
         {
-            _emulator.setImageFile(
-                    new SystemFile( f ) );
+            _emulator.setImageFile(f );
             var dir = _emulator.getImageFileDirectory();
             _loadComponent.setDirectoryEntries( dir );
         }
@@ -162,7 +160,7 @@ public final class Commodore64
         if ( argv.length > 0 ) try
         {
             _emulator.setImageFile(
-                    new SystemFile( new File( argv[0] ) ) );
+                    new File( argv[0] ) );
         }
         catch ( IOException e )
         {

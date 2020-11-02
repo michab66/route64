@@ -3,7 +3,7 @@
  * Project: Route64
  *
  * Released under GNU public license
- * Copyright © 2000-2010 Michael G. Binz
+ * Copyright © 2000-2020 Michael G. Binz
  */
 package de.michab.simulator.mos6502.c64;
 
@@ -16,6 +16,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.IOException;
 
 import de.michab.simulator.Chip;
 import de.michab.simulator.Clock;
@@ -57,7 +59,8 @@ public final class C64Core
    * @see de.michab.simulator.mos6502.c64.C64Core#setInputDevice(int)
    * @deprecated Use the InputDevice enum instead.
    */
-  public final static int D_KEYBOARD = 'K';
+  @Deprecated
+public final static int D_KEYBOARD = 'K';
 
 
 
@@ -65,7 +68,8 @@ public final class C64Core
    * @see de.michab.simulator.mos6502.c64.C64Core#setInputDevice
    * @deprecated Use the InputDevice enum instead.
    */
-  public final static int D_JOYSTICK_0 = 'G';
+  @Deprecated
+public final static int D_JOYSTICK_0 = 'G';
 
 
 
@@ -73,7 +77,8 @@ public final class C64Core
    * @see de.michab.simulator.mos6502.c64.C64Core#setInputDevice
    * @deprecated Use the InputDevice enum instead.
    */
-  public final static int D_JOYSTICK_1 = 'M';
+  @Deprecated
+public final static int D_JOYSTICK_1 = 'M';
 
 
 
@@ -250,11 +255,13 @@ public final class C64Core
     // chip base address.  Bits are low active.
     _cia2.connectPortA( new Forwarder(){
 
-      public void write( byte value )
+      @Override
+    public void write( byte value )
       {
         _vic.setPageAddress( ~value );
       }
-      public byte read()
+      @Override
+    public byte read()
       {
         return (byte)~_vic.getPageAddress();
       }
@@ -273,12 +280,10 @@ public final class C64Core
    *
    * @param file The file to check.
    */
-  public boolean isImageFileValid( SystemFile file )
+  public boolean isImageFileValid( File file )
   {
     return _ld.isValid( file );
   }
-
-
 
   /**
    * Attaches a file to the emulator.  This is the bound property
@@ -286,21 +291,20 @@ public final class C64Core
    *
    * @param file The file to attach.
    */
-  public void setImageFile( SystemFile file )
+  public void setImageFile( File file )
+      throws IOException
   {
-    SystemFile oldFile = _ld.getFile();
+    var oldFile = _ld.getFile();
 
     // If the old file name differs from the new one...
     if ( oldFile == null || !oldFile.equals( file ) )
     {
       // ...set the new one...
-      if ( _ld.setFile( file ) )
+      _ld.setFile( file );
         // ...and fire a change event in case of success.
-        _pcs.firePropertyChange( IMAGE_NAME, oldFile, file );
+      _pcs.firePropertyChange( IMAGE_NAME, oldFile, file );
     }
   }
-
-
 
   /**
    * Get the currently attached image file.  Bound property IMAGE_NAME.
@@ -308,12 +312,10 @@ public final class C64Core
    * @return The currently attached image file.  Returns <code>null</code> if
    *         no image file is attached.
    */
-  public SystemFile getImageFile()
+  public File getImageFile()
   {
     return _ld.getFile();
   }
-
-
 
   /**
    * Returns the directory of the currently loaded image file.  If none is
@@ -532,7 +534,8 @@ public final class C64Core
    * @return One of the constants D_JOYSTICK_0, D_JOYSTICK_1 or D_KEYBOARD.
    * @deprecated
    */
-  public int getInputDevice()
+  @Deprecated
+public int getInputDevice()
   {
     if ( _currentKeyListener == _keyboard )
       return D_KEYBOARD;
@@ -553,7 +556,8 @@ public final class C64Core
    *              D_KEYBOARD.
    * @deprecated Use setInputDevice( InputDevice ) instead.
    */
-  public void setInputDevice( int which )
+  @Deprecated
+public void setInputDevice( int which )
   {
     switch ( which )
     {
@@ -681,7 +685,8 @@ public final class C64Core
   /*
    * Inherit javadoc.
    */
-  public void keyTyped(KeyEvent e)
+  @Override
+public void keyTyped(KeyEvent e)
   {
     _currentKeyListener.keyTyped( e );
   }
@@ -691,7 +696,8 @@ public final class C64Core
   /*
    * Inherit javadoc.
    */
-  public void keyPressed(KeyEvent e)
+  @Override
+public void keyPressed(KeyEvent e)
   {
     _currentKeyListener.keyPressed( e );
   }
@@ -701,7 +707,8 @@ public final class C64Core
   /*
    * Inherit javadoc.
    */
-  public void keyReleased(KeyEvent e)
+  @Override
+public void keyReleased(KeyEvent e)
   {
     _currentKeyListener.keyReleased( e );
   }
