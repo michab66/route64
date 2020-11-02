@@ -3,7 +3,7 @@
  * Released under Gnu Public License
  * Copyright © 2008-2020 Michael G. Binz
  */
-package de.michab.swingx;
+package de.michab.apps.route64;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -34,12 +34,12 @@ import org.jdesktop.util.PlatformType;
  *
  * @author Michael Binz
  */
-class AppOpen
+class DropHandler
     extends
         DropTargetAdapter
 {
     private static final Logger LOG =
-            Logger.getLogger( AppOpen.class.getName() );
+            Logger.getLogger( DropHandler.class.getName() );
 
     /**
      * The used file filter.
@@ -51,7 +51,7 @@ class AppOpen
     /**
      * Create an instance.
      */
-    public AppOpen(
+    public DropHandler(
             Component host,
             Consumer<File> consumer )
     {
@@ -73,7 +73,7 @@ class AppOpen
      * passed predicate returns true.
      * @return Object instance for chained assignment.
      */
-    public AppOpen setFilter( Predicate<File> filter )
+    public DropHandler setFilter( Predicate<File> filter )
     {
         _filter = Objects.requireNonNull( filter );
         return this;
@@ -194,8 +194,8 @@ class AppOpen
             frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
             frame.setSize( new Dimension( 300, 200 ) );
 
-            new AppOpen( frame, AppOpen::cload ).
-                setFilter( AppOpen::filterPredicate );
+            new DropHandler( frame, DropHandler::cload ).
+                setFilter( DropHandler::filterPredicate );
 
             frame.setVisible( true );
         } );
