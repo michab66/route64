@@ -11,6 +11,9 @@ import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -33,6 +36,9 @@ import de.michab.simulator.mos6502.c64.C64Core;
  */
 public final class Commodore64
 {
+    private static Logger LOG = Logger.getLogger(
+            Commodore64.class.getName() );
+
     /**
      * The actual emulator instance tied to this UI.
      */
@@ -180,12 +186,38 @@ public final class Commodore64
     }
 
     /**
+     *
+     */
+    private static void initLogging()
+    {
+        try ( var loggingProperties =
+                Commodore64.class.getClassLoader().getResourceAsStream(
+                        "logging.properties") )
+        {
+            if ( loggingProperties == null )
+            {
+                LOG.warning( "No logging.properties found." );
+                return;
+            }
+
+            LogManager.getLogManager().readConfiguration(
+                    loggingProperties );
+        }
+        catch ( Exception e )
+        {
+            LOG.log( Level.WARNING, "Error reading logging.properties.", e );
+        }
+    }
+
+    /**
      * Application launch.
      *
      * @param argv The command line arguments.
      */
     public static void main( String[] argv )
     {
+        initLogging();
+
         SwingUtilities.invokeLater(
                 () -> new Commodore64().initialize( argv ) );
     }
