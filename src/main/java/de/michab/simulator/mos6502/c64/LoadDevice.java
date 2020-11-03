@@ -14,8 +14,6 @@ import de.michab.simulator.Memory;
 import de.michab.simulator.mos6502.Cpu6510;
 import de.michab.simulator.mos6502.Extension;
 
-
-
 /**
  * An extension responsible for patching the load logic into the emulator.  Is
  * patched onto the 64 ROM's load vector at 0xffd5.  This code replaces the
@@ -27,8 +25,7 @@ import de.michab.simulator.mos6502.Extension;
  * @author Michael Binz
  */
 class LoadDevice
-extends
-Extension
+    extends Extension
 {
     // These are the Commodore IO error codes.
     public static final int C64_ERROR_BREAK = 0;
@@ -42,49 +39,36 @@ Extension
     public static final int C64_MISSING_FILE_NAME = 8;
     public static final int C64_ILLEGAL_DEVICE_NUMBER = 9;
 
-
-
     /**
      * The address whose execution will trigger this extension.
      */
     private static final int LOAD_VECTOR = 0xffd5;
-
-
 
     /**
      * The processor responsible for activating this extension.
      */
     private final Cpu6510 _processor;
 
-
-
     /**
      * The input file that is read.
      */
     private ImageFile _imageFile = null;
-
-
 
     /**
      * The name of the currently loaded image file.
      */
     private File _file = null;
 
-
-
     /**
      * The available file format factories.  TODO has to be configurable or
      * fully automatic.
      */
-    private final ImageFileFactory[] _factories = new ImageFileFactory[]
-            {
-                    new AdaptD64(),
-                    new AdaptT64(),
-                    new AdaptP00(),
-                    new AdaptPrg()
-            };
-
-
+    private final ImageFileFactory[] _factories = new ImageFileFactory[] {
+            new AdaptD64(),
+            new AdaptT64(),
+            new AdaptP00(),
+            new AdaptPrg()
+    };
 
     /**
      * Create an instance.
@@ -98,8 +82,6 @@ Extension
         _processor = p;
     }
 
-
-
     /*
      * @see Extension#getBaseAddress
      */
@@ -108,8 +90,6 @@ Extension
     {
         return LOAD_VECTOR;
     }
-
-
 
     /**
      * The main entry point of this extension.
@@ -170,8 +150,6 @@ Extension
         }
     }
 
-
-
     /**
      * Looks up an ImageFileFactory that is able to handle the passed file.  If
      * no factory is found <code>null</code> is returned.
@@ -188,8 +166,6 @@ Extension
         }
         return null;
     }
-
-
 
     /**
      * Check if the passed file can be loaded.
@@ -233,8 +209,6 @@ Extension
         return result;
     }
 
-
-
     /**
      * Returns the logical device number of the attached image file.  If no image
      * file is currently is attached, 8 -- the number for the floppy disk -- is
@@ -251,8 +225,6 @@ Extension
         return result;
     }
 
-
-
     /**
      * Returns the currently attached image file.
      *
@@ -263,8 +235,6 @@ Extension
     {
         return _file;
     }
-
-
 
     /**
      * Called in case a load succeeded.
@@ -278,8 +248,6 @@ Extension
         // ...and set the new status register.
         _processor.setStatusRegister( (byte)status );
     }
-
-
 
     /**
      * Called in case a load failed.  Provides the needed error settings to the
@@ -295,8 +263,6 @@ Extension
         // Set the error code.
         _processor.setAccu( errorCode );
     }
-
-
 
     /**
      * Read the name of the file to load.  The implementation uses c64 zeropage
@@ -315,8 +281,6 @@ Extension
 
         return result;
     }
-
-
 
     /**
      * Get the secondary address for the file to load.  Implementation uses

@@ -11,6 +11,9 @@ import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -23,26 +26,22 @@ import javax.swing.ToolTipManager;
 import de.michab.apps.route64.actions.ResetAction;
 import de.michab.simulator.mos6502.c64.C64Core;
 
-
-
 /**
- * Implementation of a graphical user interface on top of the emulator.
+ * Implementation of an UI on top of the emulator.
  *
  * @version $Revision: 782 $
  * @author Michael G. Binz
  */
 public final class Commodore64
 {
+    private static Logger LOG = Logger.getLogger(
+            Commodore64.class.getName() );
+
     /**
      * The actual emulator instance tied to this UI.
      */
     private final C64Core _emulator =
             new C64Core();
-
-    /**
-     * The original command line arguments.
-     */
-    private String[] _argv;
 
     /**
      * The quick-load component on the toolbar.
@@ -138,8 +137,6 @@ public final class Commodore64
      */
     private void initialize( final String[] argv )
     {
-        _argv = argv;
-
         _emulator.addPropertyChangeListener(
               C64Core.IMAGE_NAME,
               this::imageFileChanged );
@@ -162,8 +159,8 @@ public final class Commodore64
             System.exit( 1 );
         }
 
-        if ( _argv.length > 1 )
-            _emulator.load( _argv[1].getBytes() );
+        if ( argv.length > 1 )
+            _emulator.load( argv[1].getBytes() );
 
         _mainFrame.getContentPane().add(
                 _emulator.getDisplay(),
@@ -180,12 +177,38 @@ public final class Commodore64
     }
 
     /**
+     *
+     */
+    private static void initLogging()
+    {
+        try ( var loggingProperties =
+                Commodore64.class.getClassLoader().getResourceAsStream(
+                        "logging.properties") )
+        {
+            if ( loggingProperties == null )
+            {
+                LOG.warning( "No logging.properties found." );
+                return;
+            }
+
+            LogManager.getLogManager().readConfiguration(
+                    loggingProperties );
+        }
+        catch ( Exception e )
+        {
+            LOG.log( Level.WARNING, "Error reading logging.properties.", e );
+        }
+    }
+
+    /**
      * Application launch.
      *
      * @param argv The command line arguments.
      */
     public static void main( String[] argv )
     {
+        initLogging();
+
         SwingUtilities.invokeLater(
                 () -> new Commodore64().initialize( argv ) );
     }
