@@ -3,7 +3,7 @@
  * Project: Route64
  *
  * Released under GPL (GNU public license)
- * Copyright (c) 2000-2003 Michael G. Binz
+ * Copyright (c) 2000-2020 Michael G. Binz
  */
 package de.michab.simulator.mos6502.c64;
 
@@ -200,8 +200,6 @@ public void extensionCalled( Memory m )
     return null != findFactoryFor( f );
   }
 
-
-
   /**
    * This sets the name of the file that should be used to read image data
    * from.  Note that this has nothing to do with the file name that is given
@@ -216,9 +214,9 @@ public void extensionCalled( Memory m )
         throw new IOException( "Type not supported." );
 
     _imageFile = factory.create( f );
+
+    _file = f;
   }
-
-
 
   /**
    * Returns the directory of the currently set image file.  If none is set a

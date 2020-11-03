@@ -8,10 +8,12 @@
 package de.michab.apps.route64;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
-import javax.swing.JPopupMenu;
+import javax.swing.JLabel;
+import javax.swing.JToolBar;
 
 import de.michab.simulator.mos6502.c64.C64Core;
 
@@ -23,17 +25,12 @@ import de.michab.simulator.mos6502.c64.C64Core;
  * @author Michael Binz
  */
 @SuppressWarnings("serial")
-final class LoadComponent extends AbstractAction
+final class LoadComponent extends JToolBar
 {
     /**
      * A reference to the emulator.
      */
     private final C64Core _core;
-
-    /**
-     * The list of image names.
-     */
-    private byte[][] _currentEntries = null;
 
     /**
      * A component that simplifies loading of entries contained in image files.
@@ -42,10 +39,36 @@ final class LoadComponent extends AbstractAction
     {
         super( "ACT_LOAD_COMPONENT" );
 
-        assert core != null;
+        setFloatable( false );
+        add( new JLabel( "Drag an image file into this window." ) );
 
-        _core = core;
+        _core = Objects.requireNonNull( core );
+
         setEnabled( false );
+    }
+
+    /**
+     * Set the passed file as current image.
+     *
+     * @param file The image to set.
+     */
+    public void load( File file )
+    {
+        try
+        {
+            if ( _core.getImageFile() != null )
+                _core.reset( true );
+
+            _core.setImageFile(
+                    file );
+
+            setDirectoryEntries(
+                    _core.getImageFileDirectory() );
+        }
+        catch ( Exception e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     /**
@@ -60,46 +83,12 @@ final class LoadComponent extends AbstractAction
     {
         if ( entries != null && entries.length > 0 )
         {
-            // Remember the entries set.
-            _currentEntries = entries;
+            removeAll();
+            repaint();
+
+            for ( byte[] entry : entries )
+                add( new PopItem( entry ) );
         }
-        else
-        {
-            _currentEntries = null;
-        }
-
-        setEnabled( _currentEntries != null );
-    }
-
-    /**
-     * Handles the button press.
-     *
-     * @param actionEvent
-     *            The associated event.
-     */
-    @Override
-    public void actionPerformed( ActionEvent actionEvent )
-    {
-        if ( _currentEntries == null )
-            return;
-
-        JPopupMenu popup = new JPopupMenu();
-
-        for ( byte[] entry : _currentEntries )
-            popup.add( new PopItem( entry ) );
-
-        AbstractButton source =
-            (AbstractButton)actionEvent.getSource();
-
-        // TODO(michab) This is a workaround to prevent an exception when the
-        // action is placed in a menu.
-        if ( ! source.isShowing() )
-            return;
-
-        popup.show(
-            source,
-            0,
-            source.getHeight() );
     }
 
     private class PopItem extends AbstractAction
