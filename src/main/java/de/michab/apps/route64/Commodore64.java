@@ -26,10 +26,8 @@ import javax.swing.ToolTipManager;
 import de.michab.apps.route64.actions.ResetAction;
 import de.michab.simulator.mos6502.c64.C64Core;
 
-
-
 /**
- * Implementation of a graphical user interface on top of the emulator.
+ * Implementation of an UI on top of the emulator.
  *
  * @version $Revision: 782 $
  * @author Michael G. Binz
@@ -44,11 +42,6 @@ public final class Commodore64
      */
     private final C64Core _emulator =
             new C64Core();
-
-    /**
-     * The original command line arguments.
-     */
-    private String[] _argv;
 
     /**
      * The quick-load component on the toolbar.
@@ -144,8 +137,6 @@ public final class Commodore64
      */
     private void initialize( final String[] argv )
     {
-        _argv = argv;
-
         _emulator.addPropertyChangeListener(
               C64Core.IMAGE_NAME,
               this::imageFileChanged );
@@ -168,8 +159,8 @@ public final class Commodore64
             System.exit( 1 );
         }
 
-        if ( _argv.length > 1 )
-            _emulator.load( _argv[1].getBytes() );
+        if ( argv.length > 1 )
+            _emulator.load( argv[1].getBytes() );
 
         _mainFrame.getContentPane().add(
                 _emulator.getDisplay(),
