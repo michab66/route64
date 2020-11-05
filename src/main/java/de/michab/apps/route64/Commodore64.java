@@ -105,22 +105,6 @@ public final class Commodore64
         _emulator.setSoundOn( false );
     }
 
-    private boolean filterFile( File f )
-    {
-        if ( f.isDirectory() )
-            return true;
-
-        var path = f.getPath().toLowerCase();
-
-        if ( path.endsWith( ".d64" ) )
-            return false;
-        if ( path.endsWith( ".t64" ) )
-            return false;
-        if ( path.endsWith( ".p00" ) )
-            return false;
-        return true;
-    }
-
     public void imageFileChanged( PropertyChangeEvent evt )
     {
         File imageFile = (File)evt.getNewValue();
@@ -170,7 +154,7 @@ public final class Commodore64
         new DropHandler(
                 _mainFrame,
                 f -> _loadComponent.load( f ) )
-            .setFilter( this::filterFile );
+            .setFilter( _emulator::isImageFileValid );
 
         _mainFrame.pack();
         _mainFrame.setVisible( true );

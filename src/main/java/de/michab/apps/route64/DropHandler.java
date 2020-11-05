@@ -71,7 +71,7 @@ class DropHandler
      */
     public DropHandler setFilter( Predicate<File> filter )
     {
-        _filter = Objects.requireNonNull( filter );
+        _filter = Objects.requireNonNull( filter.negate() );
         return this;
     }
 
