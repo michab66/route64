@@ -1,0 +1,56 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Commodore64",
+            "request": "launch",
+            "mainClass": "route64/de.michab.apps.route64.Commodore64",
+            "projectName": "route64"
+        },
+        {
+            "type": "java",
+            "name": "GsonRecordExample",
+            "request": "launch",
+            "mainClass": "route64/de.michab.simulator.mos6502.GsonRecordExample",
+            "projectName": "route64"
+        },
+        {
+            "type": "java",
+            "name": "ControlFrame",
+            "request": "launch",
+            "mainClass": "route64/de.michab.swingx.ControlFrame",
+            "projectName": "route64"
+        },
+        {
+            "type": "java",
+            "name": "DndMacFailure",
+            "request": "launch",
+            "mainClass": "route64/de.michab.swingx.DndMacFailure",
+            "projectName": "route64"
+        },
+        {
+            "type": "java",
+            "name": "DisasmROM",
+            "request": "launch",
+            "mainClass": "route64/de.michab.utils.tools.DisasmROM",
+            "projectName": "route64"
+        },
+        {
+            "type": "java",
+            "name": "KeyTester",
+            "request": "launch",
+            "mainClass": "route64/de.michab.utils.tools.KeyTester",
+            "projectName": "route64"
+        }
+    ]
+}

@@ -20,7 +20,7 @@ public interface Memory
 {
   /**
    * Add a forwarder to the passed memory position.
-   * 
+   *
    * @param f The <code>Forwarder</code> to add.
    * @param where The memory address where the <code>Forwarder</code> is to be
    *        placed.
@@ -58,4 +58,14 @@ public interface Memory
    * @return The 16 bit address located at the passed memory position.
    */
   int getVectorAt( int adr );
+
+  public static int mask8( int value )
+  {
+    return value & 0xff;
+  }
+
+  public static int mask16( int value )
+  {
+    return value & 0xffff;
+  }
 }

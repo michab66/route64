@@ -362,7 +362,7 @@ public class Clock
    *
    * @see #prepare()
    */
-  public class ClockHandle
+  public class ClockHandle extends de.michab.simulator.ClockHandle
   {
     /**
      * Create an instance.

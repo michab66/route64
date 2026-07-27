@@ -1,0 +1,4 @@
+{
+    "files.trimTrailingWhitespace": true,
+    "java.configuration.updateBuildConfiguration": "interactive"
+}
