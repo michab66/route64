@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.smack.application.CliApplication;
+
 
 
 /**
@@ -19,52 +21,9 @@ import java.io.IOException;
  *
  *  @author Stefan K&uuml;hnel
  */
-class DisasmROM {
+public class DisasmROM extends CliApplication {
 
     private byte buffer[]=null;
-
-
-
-    /**
-     * Decode an instruction (this method should only be used for
-     * disassembling files)
-     *
-     * @param pc programcounter
-     * @param buffer
-     */
-    public static String decode(int pc,byte buffer[]) {
-        int opcode=(buffer[pc]&0xff);
-        int len=Opcodes.getEncodingLength( opcode );
-        String text=Opcodes.getText( opcode );
-        int hi_byte=0;
-        int lo_byte=0;
-        int val=0;
-        String retv=null;
-        String str1=null;
-        String str2=null;
-        String hexval=null;
-        int beg=0;
-
-        if (len==2) {
-            lo_byte=(buffer[pc+1])&0xff;
-            val=lo_byte;
-        } else if (len==3) {
-            lo_byte=(buffer[pc+1])&0xff;
-            hi_byte=(buffer[pc+2])&0xff;
-            val=hi_byte*256+lo_byte;
-        }
-        if (len>1) {
-            hexval="  $"+Integer.toHexString(val);
-        }
-        if (text != null) {
-            retv = substitutePlaceHolders(text, hexval);
-        }
-        return retv;
-    }
-
-    private static String substitutePlaceHolders(String template, String... values) {
-        return String.format(template.replaceAll("\\{\\d\\}", "%s"), values);
-    }
 
     /**
      *
@@ -94,7 +53,7 @@ class DisasmROM {
             String codes="";
 
             while(i<length) {
-                op = decode(i,buffer);
+                op = Opcodes.decode(i,buffer);
                 opcode=byte2int(buffer[i]);
                 addr=offset+i;
 
