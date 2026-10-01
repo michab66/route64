@@ -1,0 +1,8 @@
+{
+    "files.trimTrailingWhitespace": true,
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.format.settings.url": ".vscode/michab.xml",
+    "[java]": {
+        "editor.detectIndentation": false
+    }
+}
