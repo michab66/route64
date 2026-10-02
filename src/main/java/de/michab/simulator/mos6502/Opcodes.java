@@ -993,11 +993,11 @@ final public class Opcodes
         OPCODES[ JAM_92 ] =
           new Opcode( "JAM_92", 2, AddressingMode.ZP );
         OPCODES[ AHX_93 ] =
-          new Opcode( "AHX_93", 2, AddressingMode.ZP );
+          new Opcode( "AHX_93", 6, AddressingMode.IZY );
         OPCODES[ SAX_97 ] =
           new Opcode( "SAX_97", 4, AddressingMode.ZPY );
         OPCODES[ TAS_9b ] =
-          new Opcode( "TAS_9b", 2, AddressingMode.ABSY );
+          new Opcode( "TAS_9b", 5, AddressingMode.ABSY );
         OPCODES[ SHY_9c ] =
           new Opcode( "SHY_9c", 5, AddressingMode.ABS );
         OPCODES[ SHX_9e ] =
