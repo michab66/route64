@@ -1,5 +1,7 @@
 package de.michab.simulator;
 
+import java.util.Collections;
+
 public class TestMemory implements Memory
 {
     // TODO transform to byte[].
@@ -16,20 +18,42 @@ public class TestMemory implements Memory
         this( 0x10000 );
     }
 
+    public record IO(int address, int value, boolean isWrite) {
+        public String toString() {
+            return String.format(
+                "Cycle[address=0x%04X, value=0x%02X, operation=%s]",
+                address(),
+                value(),
+                isWrite() ? "write" : "read");
+        }
+    }
+
+    private final java.util.List<IO> _cycles = new java.util.ArrayList<>();
+
     public byte read( int address )
     {
+        _cycles.add(new IO(address, _memory[address], false));
         return (byte) _memory[ address ];
     }
 
     @Override
     public void write(int address, byte value) {
-        _memory[ address ] = value;
+        _memory[ address ] = Memory.mask8(value);
+        _cycles.add(new IO(address, Memory.mask8(value), true));
     }
 
     @Override
     public void set(Forwarder f, int where) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'set'");
+    }
+
+    public void resetCycles() {
+        _cycles.clear();
+    }
+
+    public java.util.List<IO> getCycles() {
+        return new java.util.ArrayList<>(_cycles);
     }
 
     @Override
@@ -49,10 +73,10 @@ public class TestMemory implements Memory
     @Override
     public int getVectorAt(int address) {
 
-        int hi = read( Memory.mask16( address+1 ) );
-        hi &= 0xff;
         int lo = read( Memory.mask16( address ) );
         lo &= 0xff;
+        int hi = read( Memory.mask16( address+1 ) );
+        hi &= 0xff;
         return (hi << 8) | lo;
     }
 }

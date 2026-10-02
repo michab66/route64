@@ -26,7 +26,7 @@ final class C64Memory
     Memory
 {
   // The logger for this class.
-  private final static Logger _log = 
+  private final static Logger _log =
     Logger.getLogger( C64Memory.class.getName() );
 
 
@@ -231,10 +231,10 @@ final class C64Memory
    */
   public synchronized int getVectorAt( int address )
   {
-    int hi = read( address+1 );
-    hi &= 0xff;
     int lo = read( address );
     lo &= 0xff;
+    int hi = read( address+1 );
+    hi &= 0xff;
     return (hi << 8) | lo;
   }
 
@@ -269,7 +269,7 @@ final class C64Memory
 
     if ( p != null )
       return p.read();
-    
+
     return _memory[ adr ];
   }
 

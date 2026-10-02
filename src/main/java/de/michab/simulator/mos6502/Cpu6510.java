@@ -557,19 +557,34 @@ public class Cpu6510 extends DefaultChip implements Processor
     }
 
     /**
-     * Common code for opcodes 9c, 9d, 9f.
+     * Common code for opcodes 9c, 9e, 9f. Stores "a" ANDed with (high byte of
+     * the base address + 1) at base+"b". A well known hardware quirk: when
+     * adding "b" crosses a page boundary, the effective address's high byte
+     * gets corrupted to the stored value itself instead of the corrected high
+     * byte.
      */
     private void SH_YXA( int a, int b )
     {
-        // SHX: mem[base+Y] = X & (base_high+1); on page cross, high byte of
-        // addr is
-        // also replaced.
-        int base = Memory.mask8( abs() );
-        int sum = base + b;
-        int val = a & ((base >> 8) + 1);
+        int base = abs();
+        int baseHigh = (base >> 8) & 0xff;
+        int baseLow = base & 0xff;
+        int sum = baseLow + b;
+        int val = a & (baseHigh + 1);
 
-        int addr = (sum > 0xff) ? ((val << 8) | Memory.mask8( sum ))
-                : (Memory.mask16( base + b ));
+        int addr;
+        if ( sum > 0xff )
+        {
+            // Dummy read at the address with the uncorrected high byte.
+            _memory.read8( (baseHigh << 8) | (sum & 0xff) );
+            addr = (val << 8) | (sum & 0xff);
+        }
+        else
+        {
+            addr = (baseHigh << 8) | sum;
+            // Dummy read at the target address, as performed by the real
+            // 6502 before the write.
+            _memory.read8( addr );
+        }
 
         _memory.write( addr, (byte)val );
 
@@ -909,18 +924,20 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.DEC_ABSX:
-            DEC( abx() );
+            DEC( abxW() );
             incPC( 3 );
             break;
 
         // DEX
         case Opcodes.DEX_IMP:
+            dummyFetch();
             DEX();
             incPC( 1 );
             break;
 
         // DEY
         case Opcodes.DEY_IMP:
+            dummyFetch();
             DEY();
             incPC( 1 );
             break;
@@ -942,24 +959,27 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.INC_ABSX:
-            INC( abx() );
+            INC( abxW() );
             incPC( 3 );
             break;
 
         // INX ////////////////////////////////////////////////////////////
         case Opcodes.INX_IMP:
+            dummyFetch();
             INX();
             incPC( 1 );
             break;
 
         // INY ////////////////////////////////////////////////////////////
         case Opcodes.INY_IMP:
+            dummyFetch();
             INY();
             incPC( 1 );
             break;
 
         // ASL ////////////////////////////////////////////////////////////
         case Opcodes.ASL_IMP:
+            dummyFetch();
             ASL();
             incPC( 1 );
             break;
@@ -980,12 +1000,13 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.ASL_ABSX:
-            ASL( abx() );
+            ASL( abxW() );
             incPC( 3 );
             break;
 
         // ROL imp ////////////////////////////////////////////////////////////
         case Opcodes.ROL_IMP:
+            dummyFetch();
             ROL();
             incPC( 1 );
             break;
@@ -1006,12 +1027,13 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.ROL_ABSX:
-            ROL( abx() );
+            ROL( abxW() );
             incPC( 3 );
             break;
 
         // LSR imp ////////////////////////////////////////////////////////////
         case Opcodes.LSR_IMP:
+            dummyFetch();
             LSR();
             incPC( 1 );
             break;
@@ -1032,12 +1054,13 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.LSR_ABSX:
-            LSR( abx() );
+            LSR( abxW() );
             incPC( 3 );
             break;
 
         // ROR //
         case Opcodes.ROR_IMP:
+            dummyFetch();
             ROR();
             incPC( 1 );
             break;
@@ -1058,7 +1081,7 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.ROR_ABSX:
-            ROR( abx() );
+            ROR( abxW() );
             incPC( 3 );
             break;
 
@@ -1120,7 +1143,7 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.STA_IZY:
-            STA( izy() );
+            STA( izyW() );
             incPC( 2 );
             break;
 
@@ -1130,12 +1153,12 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.STA_ABSX:
-            STA( abx() );
+            STA( abxW() );
             incPC( 3 );
             break;
 
         case Opcodes.STA_ABSY:
-            STA( aby() );
+            STA( abyW() );
             incPC( 3 );
             break;
 
@@ -1225,36 +1248,42 @@ public class Cpu6510 extends DefaultChip implements Processor
 
         // TAX imp ////////////////////////////////////////////////////////////
         case Opcodes.TAX_IMP:
+            dummyFetch();
             TAX();
             incPC( 1 );
             break;
 
         // TXA imp ////////////////////////////////////////////////////////////
         case Opcodes.TXA_IMP:
+            dummyFetch();
             TXA();
             incPC( 1 );
             break;
 
         // TAY imp ////////////////////////////////////////////////////////////
         case Opcodes.TAY_IMP:
+            dummyFetch();
             TAY();
             incPC( 1 );
             break;
 
         // TYA imp ////////////////////////////////////////////////////////////
         case Opcodes.TYA_IMP:
+            dummyFetch();
             TYA();
             incPC( 1 );
             break;
 
         // TSX imp ////////////////////////////////////////////////////////////
         case Opcodes.TSX_IMP:
+            dummyFetch();
             TSX();
             incPC( 1 );
             break;
 
         // TXS imp ////////////////////////////////////////////////////////////
         case Opcodes.TXS_IMP:
+            dummyFetch();
             TXS();
             incPC( 1 );
             break;
@@ -1338,16 +1367,15 @@ public class Cpu6510 extends DefaultChip implements Processor
         {
             var lo = _memory.read( _pc + 1 );
 
-            // A dummy read, performed in the original 6502 and verified in
-            // the test suite.
-            _memory.read( _pc + 2 );
+            // Internal operation: dummy read at the current stack top before
+            // pushing, as performed by the real 6502.
+            _memory.read8( readStack() );
 
             // Push *address* of third byte.
             pushPc( _pc + 2 );
 
-            // Compute the new program counter. Note that the low byte is read
-            // again. Required to pass some edge case tests.
-            // See test 20.json "20 55 13"
+            // Compute the new program counter. The high byte is fetched last,
+            // as performed by the real 6502.
             _pc = Memory.mask16( (_memory.read( _pc + 2 ) << 8) | (lo & 0xff) );
 
             break;
@@ -1355,10 +1383,14 @@ public class Cpu6510 extends DefaultChip implements Processor
 
         // RTS imp ////////////////////////////////////////////////////////////
         case Opcodes.RTS_IMP:
+            // Dummy fetch of the next instruction byte, discarded.
+            dummyFetch();
+            // Dummy read at the current stack top before incrementing.
+            _memory.read8( readStack() );
             // Pop program counter.
             popPc();
-            // Step program counter. Read the comments for JSR rgd. address
-            // decoding. TODO check RTI and friends.
+            // Dummy fetch at the popped address before incrementing PC.
+            _memory.read8( _pc );
             incPC( 1 );
             break;
 
@@ -1384,55 +1416,58 @@ public class Cpu6510 extends DefaultChip implements Processor
             incPC( 3 );
             break;
 
-        case Opcodes.NOP_3c:
-            abx();
-            incPC( 3 );
-            break;
-
         // CLC imp ////////////////////////////////////////////////////////////
         case Opcodes.CLC_IMP:
+            dummyFetch();
             _carry = false;
             incPC( 1 );
             break;
 
         // SEC imp ////////////////////////////////////////////////////////////
         case Opcodes.SEC_IMP:
+            dummyFetch();
             _carry = true;
             incPC( 1 );
             break;
 
         // CLD imp ////////////////////////////////////////////////////////////
         case Opcodes.CLD_IMP:
+            dummyFetch();
             _decimal = false;
             incPC( 1 );
             break;
 
         // SED imp ////////////////////////////////////////////////////////////
         case Opcodes.SED_IMP:
+            dummyFetch();
             _decimal = true;
             incPC( 1 );
             break;
 
         // CLI imp ////////////////////////////////////////////////////////////
         case Opcodes.CLI_IMP:
+            dummyFetch();
             _interrupt = false;
             incPC( 1 );
             break;
 
         // SEI imp ////////////////////////////////////////////////////////////
         case Opcodes.SEI_IMP:
+            dummyFetch();
             _interrupt = true;
             incPC( 1 );
             break;
 
         // CLV imp ////////////////////////////////////////////////////////////
         case Opcodes.CLV_IMP:
+            dummyFetch();
             _overflow = false;
             incPC( 1 );
             break;
 
         // NOP imp ////////////////////////////////////////////////////////////
         case Opcodes.NOP_IMP:
+            dummyFetch();
             incPC( 1 );
             break;
 
@@ -1444,6 +1479,7 @@ public class Cpu6510 extends DefaultChip implements Processor
         case Opcodes.NOP_7a:
         case Opcodes.NOP_da:
         case Opcodes.NOP_fa:
+            dummyFetch();
             incPC( 1 );
             break;
 
@@ -1453,7 +1489,7 @@ public class Cpu6510 extends DefaultChip implements Processor
         case Opcodes.NOP_74:
         case Opcodes.NOP_d4:
         case Opcodes.NOP_f4:
-            _memory.read( Memory.mask8( _memory.read8( _pc + 1 ) + getX() ) );
+            _memory.read( zpx() );
             incPC( 2 );
             break;
 
@@ -1497,7 +1533,7 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.SLO_13:
-            SLO( izy() ); // 8
+            SLO( izyW() ); // 8
             incPC( 2 );
             break;
 
@@ -1507,12 +1543,12 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.SLO_1f:
-            SLO( abx() ); // 7
+            SLO( abxW() ); // 7
             incPC( 3 );
             break;
 
         case Opcodes.SLO_1b:
-            SLO( aby() ); // 7
+            SLO( abyW() ); // 7
             incPC( 3 );
             break;
 
@@ -1533,7 +1569,7 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.DCM_d3:
-            DCM( izy() );
+            DCM( izyW() );
             incPC( 2 );
             break;
 
@@ -1543,12 +1579,12 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.DCM_df:
-            DCM( abx() );
+            DCM( abxW() );
             incPC( 3 );
             break;
 
         case Opcodes.DCM_db:
-            DCM( aby() );
+            DCM( abyW() );
             incPC( 3 );
             break;
 
@@ -1600,7 +1636,7 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.RLA_33:
-            RLA( izy() );
+            RLA( izyW() );
             incPC( 2 );
             break;
 
@@ -1610,12 +1646,12 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.RLA_3f:
-            RLA( abx() );
+            RLA( abxW() );
             incPC( 3 );
             break;
 
         case Opcodes.RLA_3b:
-            RLA( aby() );
+            RLA( abyW() );
             incPC( 3 );
             break;
 
@@ -1636,7 +1672,7 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.RRA_73:
-            RRA( izy() );
+            RRA( izyW() );
             incPC( 2 );
             break;
 
@@ -1646,12 +1682,12 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.RRA_7f:
-            RRA( abx() );
+            RRA( abxW() );
             incPC( 3 );
             break;
 
         case Opcodes.RRA_7b:
-            RRA( aby() );
+            RRA( abyW() );
             incPC( 3 );
             break;
 
@@ -1693,7 +1729,7 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.ISC_f3:
-            ISC( izy() );
+            ISC( izyW() );
             incPC( 2 );
             break;
 
@@ -1703,12 +1739,12 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.ISC_ff:
-            ISC( abx() );
+            ISC( abxW() );
             incPC( 3 );
             break;
 
         case Opcodes.ISC_fb:
-            ISC( aby() );
+            ISC( abyW() );
             incPC( 3 );
             break;
 
@@ -1729,7 +1765,7 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.LSE_53:
-            LSE( izy() );
+            LSE( izyW() );
             incPC( 2 );
             break;
 
@@ -1739,12 +1775,12 @@ public class Cpu6510 extends DefaultChip implements Processor
             break;
 
         case Opcodes.LSE_5f:
-            LSE( abx() );
+            LSE( abxW() );
             incPC( 3 );
             break;
 
         case Opcodes.LSE_5b:
-            LSE( aby() );
+            LSE( abyW() );
             incPC( 3 );
             break;
 
@@ -1754,22 +1790,30 @@ public class Cpu6510 extends DefaultChip implements Processor
         case Opcodes.NOP_89:
         case Opcodes.NOP_c2:
         case Opcodes.NOP_e2:
+            _memory.read8( imm() );
             incPC( 2 );
             break;
 
         case Opcodes.NOP_04:
         case Opcodes.NOP_44:
         case Opcodes.NOP_64:
+            _memory.read8( zp() );
             incPC( 2 );
             break;
 
         // NOP2 (SKW) - Undocumented opcode, skips 2 bytes.
         case Opcodes.NOP_0c:
+            _memory.read8( abs() );
+            incPC( 3 );
+            break;
+
         case Opcodes.NOP_1c:
+        case Opcodes.NOP_3c:
         case Opcodes.NOP_5c:
         case Opcodes.NOP_7c:
         case Opcodes.NOP_dc:
         case Opcodes.NOP_fc:
+            _memory.read8( abx() );
             incPC( 3 );
             break;
 
@@ -1824,20 +1868,39 @@ public class Cpu6510 extends DefaultChip implements Processor
 
         case Opcodes.AHX_93:
         {
-            // AHX: undocumented; stores A & X & high byte of address.
-            _memory.write( zp(), (byte)(_accu & _x & ((_pc >> 8) + 1)) );
+            // AHX/SHA via ($zp),Y; same high-byte corruption as the
+            // absolute,X/Y variants, but with indirect indexed addressing.
+            int zpAddr = _memory.read8( Memory.mask16( _pc + 1 ) );
+            int base = ind( zpAddr );
+            int baseHigh = (base >> 8) & 0xff;
+            int baseLow = base & 0xff;
+            int sum = baseLow + getY();
+            int val = (getAccu() & getX()) & (baseHigh + 1);
+
+            int addr;
+            if ( sum > 0xff )
+            {
+                _memory.read8( (baseHigh << 8) | (sum & 0xff) );
+                addr = (val << 8) | (sum & 0xff);
+            }
+            else
+            {
+                addr = (baseHigh << 8) | sum;
+                _memory.read8( addr );
+            }
+
+            _memory.write( addr, (byte)val );
+
             incPC( 2 );
             break;
         }
 
         case Opcodes.TAS_9b:
         {
-            // TAS/SHS: S = A&X; mem[base+Y] = A&X & (high(base)+1)
-            int base = abs();
-            int effective = Memory.mask16( base + getY() );
+            // TAS/SHS: S = A&X; mem = S & (high(base)+1), with the same
+            // high-byte corruption as SHX/SHY/AHX.
             _stack = (byte)(_accu & _x);
-            _memory.write( effective, (byte)(_stack & ((base >> 8) + 1)) );
-            incPC( 3 );
+            SH_YXA( Memory.mask8( _stack ), getY() );
             break;
         }
 
@@ -1846,7 +1909,7 @@ public class Cpu6510 extends DefaultChip implements Processor
             // SHY/SAY: mem[base+X] = Y & (base_high+1); on page cross, high
             // byte of
             // addr is also replaced.
-            SH_YXA( getX(), getY() );
+            SH_YXA( getY(), getX() );
             break;
         }
 
@@ -1855,7 +1918,7 @@ public class Cpu6510 extends DefaultChip implements Processor
             // SHX: mem[base+Y] = X & (base_high+1); on page cross, high byte of
             // addr
             // is also replaced.
-            SH_YXA( getY(), getX() );
+            SH_YXA( getX(), getY() );
             break;
         }
 
@@ -1896,7 +1959,7 @@ public class Cpu6510 extends DefaultChip implements Processor
         {
             // AXS/SBX: X = (A & X) - imm; no borrow in, C = no-borrow out.
             int ax = (_accu & _x) & 0xff;
-            int op = _memory.read( imm() ) & 0xff;
+            int op = _memory.read8( imm() );
             int res = ax - op;
             _x = (byte)res;
             _carry = (ax >= op);
@@ -2078,13 +2141,24 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void ADC( int operandAdr )
     {
+        adcValue( _memory.read8( operandAdr ) );
+    }
+
+    /**
+     * Core add-with-carry logic, operating on an already fetched operand.
+     * Used directly by RRA, which rotates the memory operand before adding it
+     * without a separate memory read.
+     *
+     * @param op
+     *            The operand value, masked to [0..255].
+     */
+    private void adcValue( int op )
+    {
         // Note: Just for clarification, we have two accu variables in this
         // method. 'accu' w/o underscore means the local copy of the value from
         // the '_accu' register.
         int accu = _accu;
         accu &= 0xff;
-        int op = _memory.read( operandAdr );
-        op &= 0xff;
 
         if ( _decimal )
         {
@@ -2171,10 +2245,12 @@ public class Cpu6510 extends DefaultChip implements Processor
      * @param operandAdr
      *            The operand's address.
      */
-    private void ASL( int operandAdr )
+    private byte ASL( int operandAdr )
     {
         // Read the operand.
         byte operand = _memory.read( operandAdr );
+        // Dummy write-back of the unmodified value, as performed by the real 6502.
+        _memory.write( operandAdr, operand );
         // Move the most significant bit into the carry register.
         _carry = operand < 0;
         // Perform the shift.
@@ -2183,6 +2259,7 @@ public class Cpu6510 extends DefaultChip implements Processor
         _memory.write( operandAdr, operand );
         // Set registers.
         setRegsNZ( operand );
+        return operand;
     }
 
     /**
@@ -2194,8 +2271,10 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void SLO( int operandAdr )
     {
-        ASL( operandAdr );
-        ORA( operandAdr );
+        byte shifted = ASL( operandAdr );
+        // ORA uses the already-shifted value, no extra memory read.
+        _accu |= shifted;
+        setRegsNZ( _accu );
     }
 
     /**
@@ -2220,10 +2299,43 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void branchOn( boolean condition )
     {
-        if ( condition )
-            _pc = rel();
+        // The operand byte is always fetched, whether or not the branch is taken.
+        int offset = _memory.read( Memory.mask16( _pc + 1 ) );
+        int next = Memory.mask16( _pc + 2 );
+
+        if ( !condition )
+        {
+            _pc = next;
+            return;
+        }
+
+        // Dummy fetch of the next sequential opcode, discarded since the branch
+        // is taken.
+        _memory.read8( next );
+
+        int target = Memory.mask16( next + offset );
+
+        if ( samePage( next, target ) )
+        {
+            _cycles += 1;
+        }
         else
-            incPC( 2 );
+        {
+            // Dummy fetch at the address with the uncorrected high byte.
+            _memory.read8( (next & 0xff00) | (target & 0xff) );
+            _cycles += 2;
+        }
+
+        _pc = target;
+    }
+
+    /**
+     * Implied/accumulator-mode opcodes always fetch (and discard) the byte
+     * following the opcode.
+     */
+    private void dummyFetch()
+    {
+        _memory.read8( Memory.mask16( _pc + 1 ) );
     }
 
     /**
@@ -2233,8 +2345,10 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void BRK()
     {
-        // Push program counter for the next opcode.
-        _pc += 1;
+        // BRK reads and discards a padding byte following the opcode.
+        _memory.read( _pc + 1 );
+        // Push program counter for the instruction after the padding byte.
+        _pc += 2;
         pushPc();
         // Set break flag.
         _break = true;
@@ -2262,8 +2376,23 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void cmpImpl( int operandAdr, byte register )
     {
+        cmpValue( _memory.read8( operandAdr ) & 0xff, register );
+    }
+
+    /**
+     * Core compare logic, operating on an already fetched operand. Used
+     * directly by DCM, which decrements the memory operand before comparing
+     * it without a separate memory read.
+     *
+     * @param value
+     *            The operand value, masked to [0..255].
+     * @param register
+     *            The referred register's contents.
+     */
+    private void cmpValue( int value, byte register )
+    {
         int scratch_integer_1 = Memory.mask8( register );
-        int scratch_integer_2 = _memory.read8( operandAdr );
+        int scratch_integer_2 = value;
         scratch_integer_1 -= scratch_integer_2;
         byte scratch_byte_1 = (byte)scratch_integer_1;
 
@@ -2321,8 +2450,9 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void DCM( int operandAdr )
     {
-        DEC( operandAdr );
-        CMP( operandAdr );
+        byte decremented = DEC( operandAdr );
+        // CMP uses the already-decremented value, no extra memory read.
+        cmpValue( decremented & 0xff, _accu );
     }
 
     /**
@@ -2331,16 +2461,19 @@ public class Cpu6510 extends DefaultChip implements Processor
      * @param operandAdr
      *            The operand's address.
      */
-    private void DEC( int operandAdr )
+    private byte DEC( int operandAdr )
     {
         // Read the operand from memory.
         byte operand = _memory.read( operandAdr );
+        // Dummy write-back of the unmodified value, as performed by the real 6502.
+        _memory.write( operandAdr, operand );
         // Perform the operation.
         operand--;
         // Write the result back.
         _memory.write( operandAdr, operand );
         // Set registers.
         setRegsNZ( operand );
+        return operand;
     }
 
     /**
@@ -2391,16 +2524,19 @@ public class Cpu6510 extends DefaultChip implements Processor
      * @see de.michab.simulator.mos6502.Cpu6510#INX()
      * @see de.michab.simulator.mos6502.Cpu6510#INY()
      */
-    private void INC( int operandAdr )
+    private byte INC( int operandAdr )
     {
         // Read the operand.
         byte operand = _memory.read( operandAdr );
+        // Dummy write-back of the unmodified value, as performed by the real 6502.
+        _memory.write( operandAdr, operand );
         // Perform the operation.
         operand++;
         // Write the result.
         _memory.write( operandAdr, operand );
         // Set registers.
         setRegsNZ( operand );
+        return operand;
     }
 
     /**
@@ -2439,9 +2575,9 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void ISC( int operandAddr )
     {
-        int val = (_memory.read( operandAddr ) + 1) & 0xff;
-        _memory.write( operandAddr, (byte)val );
-        SBC( operandAddr );
+        byte incremented = INC( operandAddr );
+        // SBC uses the already-incremented value, no extra memory read.
+        sbcValue( incremented & 0xff );
     }
 
     /**
@@ -2452,8 +2588,11 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void LAX( int operandAdr )
     {
-        LDA( operandAdr );
-        LDX( operandAdr );
+        // Single read, as performed by the real 6502: both registers are
+        // loaded from the same fetched value.
+        _accu = _memory.read( operandAdr );
+        _x = _accu;
+        setRegsNZ( _accu );
     }
 
     /**
@@ -2512,8 +2651,10 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void LSE( int operandAdr )
     {
-        LSR( operandAdr );
-        EOR( operandAdr );
+        byte shifted = LSR( operandAdr );
+        // EOR uses the already-shifted value, no extra memory read.
+        _accu ^= shifted;
+        setRegsNZ( _accu );
     }
 
     /**
@@ -2541,11 +2682,13 @@ public class Cpu6510 extends DefaultChip implements Processor
      * @param operandAdr
      *            The operand's address.
      */
-    private void LSR( int operandAdr )
+    private byte LSR( int operandAdr )
     {
         // Read the operand from memory. This has to be of int type because of
         // 'Unary numeric promotion'. See Java language specification �5.6.1
         int operand = _memory.read8( operandAdr );
+        // Dummy write-back of the unmodified value, as performed by the real 6502.
+        _memory.write( operandAdr, (byte)operand );
         // Move the least significant bit into carry.
         _carry = (operand & 1) != 0;
         // Perform the shift. This is an unsigned divide.
@@ -2554,6 +2697,7 @@ public class Cpu6510 extends DefaultChip implements Processor
         _memory.write( operandAdr, (byte)operand );
         // Set registers.
         setRegsNZ( (byte)operand );
+        return (byte)operand;
     }
 
     /**
@@ -2576,6 +2720,8 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void PHA()
     {
+        // Dummy fetch of the next instruction byte, discarded.
+        dummyFetch();
         // Perform the operation.
         _memory.write( decrementStack(), _accu );
     }
@@ -2587,8 +2733,12 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void PHP()
     {
-        // Perform the operation.
+        // Dummy fetch of the next instruction byte, discarded.
+        dummyFetch();
+        // The pushed status byte always has the break flag set.
+        _break = true;
         _memory.write( decrementStack(), (byte)getStatusRegister() );
+        _break = false;
     }
 
     /**
@@ -2598,6 +2748,10 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void PLA()
     {
+        // Dummy fetch of the next instruction byte, discarded.
+        dummyFetch();
+        // Dummy read at the current stack top before incrementing.
+        _memory.read8( readStack() );
         // Perform the operation.
         _accu = _memory.read( incrementStack() );
         // Set the registers.
@@ -2611,6 +2765,10 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void PLP()
     {
+        // Dummy fetch of the next instruction byte, discarded.
+        dummyFetch();
+        // Dummy read at the current stack top before incrementing.
+        _memory.read8( readStack() );
         setStatusRegister( _memory.read( incrementStack() ) );
         _break = false;
 
@@ -2625,8 +2783,10 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void RLA( int operandAdr )
     {
-        ROL( operandAdr );
-        AND( operandAdr );
+        byte rotated = ROL( operandAdr );
+        // AND uses the already-rotated value, no extra memory read.
+        _accu &= rotated;
+        setRegsNZ( _accu );
     }
 
     /**
@@ -2656,9 +2816,11 @@ public class Cpu6510 extends DefaultChip implements Processor
      *            The operand's address.
      * @see de.michab.simulator.mos6502.Cpu6510#ROR(int)
      */
-    private void ROL( int operandAdr )
+    private byte ROL( int operandAdr )
     {
         byte operand = _memory.read( operandAdr );
+        // Dummy write-back of the unmodified value, as performed by the real 6502.
+        _memory.write( operandAdr, operand );
         // Save carry.
         boolean originalCarry = _carry;
         // Check the msb and set carry accordingly.
@@ -2672,6 +2834,7 @@ public class Cpu6510 extends DefaultChip implements Processor
         _memory.write( operandAdr, operand );
         // Set registers.
         setRegsNZ( operand );
+        return operand;
     }
 
     /**
@@ -2705,11 +2868,13 @@ public class Cpu6510 extends DefaultChip implements Processor
      *            The operand's address.
      * @see de.michab.simulator.mos6502.Cpu6510#ROL(int)
      */
-    private void ROR( int operandAdr )
+    private byte ROR( int operandAdr )
     {
         // Read the operand from memory. This has to be of int type because of
         // 'Unary numeric promotion'. See Java language specification �5.6.1
         int operand = _memory.read8( operandAdr );
+        // Dummy write-back of the unmodified value, as performed by the real 6502.
+        _memory.write( operandAdr, (byte)operand );
         // Place the existing carry bit into bit 8...
         if ( _carry )
             operand |= 0x100;
@@ -2721,6 +2886,7 @@ public class Cpu6510 extends DefaultChip implements Processor
         _memory.write( operandAdr, (byte)operand );
         // ...and set the registers.
         setRegsNZ( (byte)operand );
+        return (byte)operand;
     }
 
     /**
@@ -2732,8 +2898,9 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void RRA( int operandAdr )
     {
-        ROR( operandAdr );
-        ADC( operandAdr );
+        byte rotated = ROR( operandAdr );
+        // ADC uses the already-rotated value, no extra memory read.
+        adcValue( rotated & 0xff );
     }
 
     /**
@@ -2743,6 +2910,11 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void RTI()
     {
+        // Dummy fetch of the next instruction byte, discarded.
+        dummyFetch();
+        // Dummy read at the current stack top before incrementing.
+        _memory.read8( readStack() );
+
         // Pop status register.
         setStatusRegister( _memory.read( incrementStack() ) );
         _break = false;
@@ -2774,9 +2946,21 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private void SBC( int operandAdr )
     {
+        sbcValue( _memory.read8( operandAdr ) & 0xff );
+    }
+
+    /**
+     * Core subtract-with-carry logic, operating on an already fetched operand.
+     * Used directly by ISC, which increments the memory operand before
+     * subtracting it without a separate memory read.
+     *
+     * @param op
+     *            The operand value, masked to [0..255].
+     */
+    private void sbcValue( int op )
+    {
         // Perform the operation.
         int accu = Memory.mask8( _accu );
-        int op = _memory.read8( operandAdr );
 
         boolean originalCarry = _carry;
         int result = accu - op;
@@ -2976,8 +3160,10 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private int zp( byte index )
     {
-        int result = Memory.mask8( index );
-        result += zp();
+        int base = zp();
+        // Dummy read of the un-indexed address, as performed by the real 6502.
+        _memory.read8( base );
+        int result = Memory.mask8( index ) + base;
         return Memory.mask8( result );
     }
 
@@ -3026,7 +3212,33 @@ public class Cpu6510 extends DefaultChip implements Processor
         int result = Memory.mask16( base + offset );
 
         if ( !samePage( base, result ) )
+        {
+            // Dummy read at the address with the uncorrected high byte, as
+            // performed by the real 6502 before the corrected read.
+            _memory.read8( (base & 0xff00) | (result & 0xff) );
             _cycles++;
+        }
+
+        return result;
+    }
+
+    /**
+     * Addressing mode: indirect indexed ($00),Y, for store and
+     * read-modify-write instructions. These always spend the extra cycle on
+     * a dummy read at the target address, even without a page crossing.
+     *
+     * @return The operand address.
+     */
+    private int izyW()
+    {
+        int base = _memory.read8( Memory.mask16( _pc + 1 ) );
+        base = ind( base );
+
+        int offset = Memory.mask8( _y );
+        int result = Memory.mask16( base + offset );
+
+        _memory.read8( (base & 0xff00) | (result & 0xff) );
+        _cycles++;
 
         return result;
     }
@@ -3055,7 +3267,12 @@ public class Cpu6510 extends DefaultChip implements Processor
         int result = Memory.mask16( Memory.mask8( index ) + base );
 
         if ( !samePage( base, result ) )
+        {
+            // Dummy read at the address with the uncorrected high byte, as
+            // performed by the real 6502 before the corrected read.
+            _memory.read8( (base & 0xff00) | (result & 0xff) );
             _cycles++;
+        }
 
         return result;
     }
@@ -3081,6 +3298,48 @@ public class Cpu6510 extends DefaultChip implements Processor
     }
 
     /**
+     * Absolute indexed addressing for store and read-modify-write
+     * instructions. These always spend the extra cycle on a dummy read at
+     * the target address, even without a page crossing, since the real 6502
+     * cannot write before the address correction is known.
+     *
+     * @param index
+     * @return The operand address.
+     */
+    private int absW( byte index )
+    {
+        int base = abs();
+
+        int result = Memory.mask16( Memory.mask8( index ) + base );
+
+        _memory.read8( (base & 0xff00) | (result & 0xff) );
+        _cycles++;
+
+        return result;
+    }
+
+    /**
+     * Addressing mode: absolute indexed x $0000,x, for store and
+     * read-modify-write instructions.
+     *
+     * @return The operand address.
+     */
+    private int abxW()
+    {
+        return absW( _x );
+    }
+
+    /**
+     * Addressing mode: absolute indexed y $0000,y, for store instructions.
+     *
+     * @return The operand address.
+     */
+    private int abyW()
+    {
+        return absW( _y );
+    }
+
+    /**
      * Addressing mode: indirect ($0000)
      *
      * @return The operand address.
@@ -3102,40 +3361,17 @@ public class Cpu6510 extends DefaultChip implements Processor
      */
     private int ind( int address )
     {
+        // Low byte access is easy.
+        int loByte = _memory.read8( address );
+
         // Indirect addressing does not handle page crossing. If our initial
         // address above was 01ff, then the following expression accesses the
-        // high
-        // byte at 0x0100.
+        // high byte at 0x0100.
         int page = address & 0xff00;
         int offset = address & 0xff;
-        int hiByte = _memory.read( page | (0xff & (offset + 1)) );
-        hiByte &= 0xff;
-        // Low byte access is easy.
-        int loByte = _memory.read( address );
-        loByte &= 0xff;
+        int hiByte = _memory.read8( page | (0xff & (offset + 1)) );
+
         return (hiByte << 8) | loByte;
-    }
-
-    /**
-     * Addressing mode: relative (branch instructions)
-     *
-     * @return The operand address.
-     */
-    private int rel()
-    {
-        // Adress of the next instruction.
-        int next = Memory.mask16( _pc + 2 );
-        // Add the signed offset.
-        int target = next + Memory.mask16( _memory.read( _pc + 1 ) );
-
-        // Update cycle count. We are only called in case the branch is taken.
-        // Takes one cycle on same page, two if page is crossed.
-        if ( samePage( next, target ) )
-            _cycles += 1;
-        else
-            _cycles += 2;
-
-        return Memory.mask16( target );
     }
 
     /**
